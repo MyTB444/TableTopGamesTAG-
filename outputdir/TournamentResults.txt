@@ -1,0 +1,72 @@
+Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
+Alpha calculations using Delta Ordinal
+Alpha: 10.0
+	0.977	FirstAction
+	0.000	random
+	0.023	osla
+
+Transition matrix for alpha = 10.0
+0.977	0.000	0.023	
+0.651	0.000	0.349	
+0.977	0.000	0.023	
+B matrix for alpha = 10.0
+3.287	0.645	1.227	
+0.645	0.546	0.644	
+1.227	0.644	1.078	
+Alpha calculations using Win Rate
+Alpha: 10.0
+	0.977	FirstAction
+	0.000	random
+	0.023	osla
+
+Transition matrix for alpha = 10.0
+0.977	0.000	0.023	
+0.651	0.000	0.349	
+0.977	0.000	0.023	
+B matrix for alpha = 10.0
+3.287	0.645	1.227	
+0.645	0.546	0.644	
+1.227	0.644	1.078	
+FirstAction got 51.00 points. FirstAction won 53.1% of the 96 games of the tournament. FirstAction won 79.7% of the 64 games it played during the tournament.
+FirstAction got a mean score of 0.59.
+FirstAction won 90.6% of the 32 games against random.
+FirstAction won 68.8% of the 32 games against osla.
+
+random got 7.00 points. random won 7.3% of the 96 games of the tournament. random won 10.9% of the 64 games it played during the tournament.
+random got a mean score of -0.78.
+random won 9.4% of the 32 games against FirstAction.
+random won 12.5% of the 32 games against osla.
+
+osla got 38.00 points. osla won 39.6% of the 96 games of the tournament. osla won 59.4% of the 64 games it played during the tournament.
+osla got a mean score of 0.19.
+osla won 31.3% of the 32 games against FirstAction.
+osla won 87.5% of the 32 games against random.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+FirstAction: Win rate 0.80 +/- 0.050	Mean Ordinal 1.20 +/- 0.05
+osla: Win rate 0.59 +/- 0.061	Mean Ordinal 1.41 +/- 0.06
+random: Win rate 0.11 +/- 0.039	Mean Ordinal 1.89 +/- 0.04
+
+Alpha-rank by Win Rate
+	FirstAction                   	0.98
+	osla                          	0.02
+	random                        	0.00
+
+Alpha-rank by Ordinal Position
+	FirstAction                   	0.98
+	osla                          	0.02
+	random                        	0.00
+
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+FirstAction got 29.50 points. FirstAction won 29.0% of the 100 games of the tournament. FirstAction won 29.0% of the 100 games it played during the tournament.
+FirstAction got a mean score of -0.41.
+FirstAction won 29.0% of the 100 games against osla.
+
+osla got 70.50 points. osla won 70.0% of the 100 games of the tournament. osla won 70.0% of the 100 games it played during the tournament.
+osla got a mean score of 0.41.
+osla won 70.0% of the 100 games against FirstAction.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+osla: Win rate 0.71 +/- 0.045	Mean Ordinal 1.29 +/- 0.05
+FirstAction: Win rate 0.30 +/- 0.045	Mean Ordinal 1.70 +/- 0.05
+
