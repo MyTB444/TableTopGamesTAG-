@@ -70,3 +70,164 @@ osla won 70.0% of the 100 games against FirstAction.
 osla: Win rate 0.71 +/- 0.045	Mean Ordinal 1.29 +/- 0.05
 FirstAction: Win rate 0.30 +/- 0.045	Mean Ordinal 1.70 +/- 0.05
 
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
+random1 got 39.50 points. random1 won 1.1% of the 1000 games of the tournament. random1 won 1.1% of the 1000 games it played during the tournament.
+random1 got a mean score of -0.92.
+random1 won 1.1% of the 1000 games against BasicMCTS.
+
+BasicMCTS got 960.50 points. BasicMCTS won 93.2% of the 1000 games of the tournament. BasicMCTS won 93.2% of the 1000 games it played during the tournament.
+BasicMCTS got a mean score of 0.92.
+BasicMCTS won 93.2% of the 1000 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.96 +/- 0.005	Mean Ordinal 1.01 +/- 0.00
+random1: Win rate 0.04 +/- 0.005	Mean Ordinal 1.93 +/- 0.01
+
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
+random1 got 33.50 points. random1 won 0.5% of the 1000 games of the tournament. random1 won 0.5% of the 1000 games it played during the tournament.
+random1 got a mean score of -0.93.
+random1 won 0.5% of the 1000 games against BasicMCTS.
+
+BasicMCTS got 966.50 points. BasicMCTS won 93.8% of the 1000 games of the tournament. BasicMCTS won 93.8% of the 1000 games it played during the tournament.
+BasicMCTS got a mean score of 0.93.
+BasicMCTS won 93.8% of the 1000 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.97 +/- 0.004	Mean Ordinal 1.01 +/- 0.00
+random1: Win rate 0.03 +/- 0.004	Mean Ordinal 1.94 +/- 0.01
+
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
+random1 got 40.00 points. random1 won 1.0% of the 1000 games of the tournament. random1 won 1.0% of the 1000 games it played during the tournament.
+random1 got a mean score of -0.92.
+random1 won 1.0% of the 1000 games against BasicMCTS.
+
+BasicMCTS got 960.00 points. BasicMCTS won 93.0% of the 1000 games of the tournament. BasicMCTS won 93.0% of the 1000 games it played during the tournament.
+BasicMCTS got a mean score of 0.92.
+BasicMCTS won 93.0% of the 1000 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.96 +/- 0.005	Mean Ordinal 1.01 +/- 0.00
+random1: Win rate 0.04 +/- 0.005	Mean Ordinal 1.93 +/- 0.01
+
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
+FirstAction got 1.00 points. FirstAction won 0.0% of the 1000 games of the tournament. FirstAction won 0.0% of the 1000 games it played during the tournament.
+FirstAction got a mean score of -1.00.
+FirstAction won 0.0% of the 1000 games against BasicMCTS.
+
+BasicMCTS got 999.00 points. BasicMCTS won 99.8% of the 1000 games of the tournament. BasicMCTS won 99.8% of the 1000 games it played during the tournament.
+BasicMCTS got a mean score of 1.00.
+BasicMCTS won 99.8% of the 1000 games against FirstAction.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 1.00 +/- 0.001	Mean Ordinal 1.00 +/- 0.00
+FirstAction: Win rate 0.00 +/- 0.001	Mean Ordinal 2.00 +/- 0.00
+
+Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
+random1 got 0.00 points. random1 won 0.0% of the 1000 games of the tournament. random1 won 0.0% of the 1000 games it played during the tournament.
+random1 got a mean score of -1.00.
+random1 won 0.0% of the 1000 games against BasicMCTS.
+
+BasicMCTS got 1000.00 points. BasicMCTS won 100.0% of the 1000 games of the tournament. BasicMCTS won 100.0% of the 1000 games it played during the tournament.
+BasicMCTS got a mean score of 1.00.
+BasicMCTS won 100.0% of the 1000 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 1.00 +/- 0.000	Mean Ordinal 1.00 +/- 0.00
+random1: Win rate 0.00 +/- 0.000	Mean Ordinal 2.00 +/- 0.00
+
+Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+random1 got 70.00 points. random1 won 70.0% of the 100 games of the tournament. random1 won 70.0% of the 100 games it played during the tournament.
+random1 got a mean score of 0.40.
+random1 won 70.0% of the 100 games against rmhc.
+
+rmhc got 30.00 points. rmhc won 30.0% of the 100 games of the tournament. rmhc won 30.0% of the 100 games it played during the tournament.
+rmhc got a mean score of -0.40.
+rmhc won 30.0% of the 100 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+random1: Win rate 0.70 +/- 0.046	Mean Ordinal 1.30 +/- 0.05
+rmhc: Win rate 0.30 +/- 0.046	Mean Ordinal 1.70 +/- 0.05
+
+Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+random1 got 69.00 points. random1 won 69.0% of the 100 games of the tournament. random1 won 69.0% of the 100 games it played during the tournament.
+random1 got a mean score of 0.38.
+random1 won 69.0% of the 100 games against rmhc.
+
+rmhc got 31.00 points. rmhc won 31.0% of the 100 games of the tournament. rmhc won 31.0% of the 100 games it played during the tournament.
+rmhc got a mean score of -0.38.
+rmhc won 31.0% of the 100 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+random1: Win rate 0.69 +/- 0.046	Mean Ordinal 1.31 +/- 0.05
+rmhc: Win rate 0.31 +/- 0.046	Mean Ordinal 1.69 +/- 0.05
+
+Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+random1 got 50.00 points. random1 won 50.0% of the 100 games of the tournament. random1 won 50.0% of the 100 games it played during the tournament.
+random1 got a mean score of 0.00.
+random1 won 50.0% of the 100 games against rmhc.
+
+rmhc got 50.00 points. rmhc won 50.0% of the 100 games of the tournament. rmhc won 50.0% of the 100 games it played during the tournament.
+rmhc got a mean score of 0.00.
+rmhc won 50.0% of the 100 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+random1: Win rate 0.50 +/- 0.050	Mean Ordinal 1.50 +/- 0.05
+rmhc: Win rate 0.50 +/- 0.050	Mean Ordinal 1.50 +/- 0.05
+
+Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+random1 got 46.00 points. random1 won 46.0% of the 100 games of the tournament. random1 won 46.0% of the 100 games it played during the tournament.
+random1 got a mean score of -0.08.
+random1 won 46.0% of the 100 games against rmhc.
+
+rmhc got 54.00 points. rmhc won 54.0% of the 100 games of the tournament. rmhc won 54.0% of the 100 games it played during the tournament.
+rmhc got a mean score of 0.08.
+rmhc won 54.0% of the 100 games against random1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+rmhc: Win rate 0.54 +/- 0.050	Mean Ordinal 1.46 +/- 0.05
+random1: Win rate 0.46 +/- 0.050	Mean Ordinal 1.54 +/- 0.05
+
+Game: CantStop, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
+rmhc got 56.00 points. rmhc won 56.0% of the 100 games of the tournament. rmhc won 56.0% of the 100 games it played during the tournament.
+rmhc got a mean score of 2.40.
+rmhc won 56.0% of the 100 games against rhea.
+
+rhea got 44.00 points. rhea won 44.0% of the 100 games of the tournament. rhea won 44.0% of the 100 games it played during the tournament.
+rhea got a mean score of 2.22.
+rhea won 44.0% of the 100 games against rmhc.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+rmhc: Win rate 0.56 +/- 0.050	Mean Ordinal 1.44 +/- 0.05
+rhea: Win rate 0.44 +/- 0.050	Mean Ordinal 1.56 +/- 0.05
+
+Game: SushiGo, Players: 4, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 4
+BasicMCTS got 37.00 points. BasicMCTS won 37.5% of the 96 games of the tournament. BasicMCTS won 37.5% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 33.58.
+BasicMCTS won 37.5% of the 96 games against random.
+BasicMCTS won 37.5% of the 96 games against osla.
+BasicMCTS won 37.5% of the 96 games against rhea.
+
+random got 8.00 points. random won 8.3% of the 96 games of the tournament. random won 8.3% of the 96 games it played during the tournament.
+random got a mean score of 25.10.
+random won 8.3% of the 96 games against BasicMCTS.
+random won 8.3% of the 96 games against osla.
+random won 8.3% of the 96 games against rhea.
+
+osla got 3.00 points. osla won 3.1% of the 96 games of the tournament. osla won 3.1% of the 96 games it played during the tournament.
+osla got a mean score of 24.82.
+osla won 3.1% of the 96 games against BasicMCTS.
+osla won 3.1% of the 96 games against random.
+osla won 3.1% of the 96 games against rhea.
+
+rhea got 48.00 points. rhea won 49.0% of the 96 games of the tournament. rhea won 49.0% of the 96 games it played during the tournament.
+rhea got a mean score of 35.57.
+rhea won 49.0% of the 96 games against BasicMCTS.
+rhea won 49.0% of the 96 games against random.
+rhea won 49.0% of the 96 games against osla.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+rhea: Win rate 0.50 +/- 0.050	Mean Ordinal 1.70 +/- 0.09
+BasicMCTS: Win rate 0.39 +/- 0.049	Mean Ordinal 1.93 +/- 0.10
+random: Win rate 0.08 +/- 0.028	Mean Ordinal 3.15 +/- 0.10
+osla: Win rate 0.03 +/- 0.018	Mean Ordinal 3.17 +/- 0.08
+

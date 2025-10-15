@@ -1,0 +1,11 @@
+{
+	"class" : "players.rmhc.RMHCParams",
+	"horizon": 20,
+	"discountFactor": 1.0,
+	"budgetType" : "BUDGET_FM_CALLS",
+	"budget" : 1000,
+	"breakMS" : 0,
+	"heuristic" : {
+		"class" : "players.heuristics.ScoreHeuristic"
+	}
+}
