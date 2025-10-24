@@ -19,9 +19,6 @@ import players.human.HumanConsolePlayer;
 import players.human.HumanGUIPlayer;
 import players.mcts.MCTSParams;
 import players.mcts.MCTSPlayer;
-import players.rhea.RHEAEnums;
-import players.rhea.RHEAParams;
-import players.rhea.RHEAPlayer;
 import players.rmhc.RMHCParams;
 import players.rmhc.RMHCPlayer;
 import players.simple.OSLAPlayer;
@@ -291,7 +288,7 @@ public class Game {
                         wait();
                     }
                 } catch (InterruptedException e) {
-                    // Meh.ss
+                    // Meh.
                 }
                 int activePlayer = gameState.getCurrentPlayer();
                 if (debug) System.out.printf("Entered synchronized block in Game for player %s%n", activePlayer);
@@ -699,7 +696,7 @@ public class Game {
      * and then run this class.
      */
     public static void main(String[] args) {
-        String gameType = Utils.getArg(args, "game", "Sushigo");
+        String gameType = Utils.getArg(args, "game", "Chess");
         boolean useGUI = Utils.getArg(args, "gui", true);
         int turnPause = Utils.getArg(args, "turnPause", 0);
         long seed = Utils.getArg(args, "seed", System.currentTimeMillis());
@@ -707,18 +704,12 @@ public class Game {
 
         /* Set up players for the game */
         ArrayList<AbstractPlayer> players = new ArrayList<>();
-        MCTSParams params = new MCTSParams();
-        params.K = Math.sqrt(2);
-        params.rolloutLength= 10;
-        params.maxTreeDepth= 5;
-        AbstractPlayer player = new MCTSPlayer(params);
-        //players.add(new RandomPlayer());
-        RHEAParams params2 = new RHEAParams();
-        players.add(new RHEAPlayer(params2));
-        players.add(player);
-        players.add(new OSLAPlayer());
+        players.add(new RandomPlayer());
+        players.add(new RandomPlayer());
+    //    players.add(new BasicMCTSPlayer());
+//        players.add(new OSLAPlayer());
 //        players.add(new RMHCPlayer());
-        players.add(new HumanGUIPlayer(ac));
+        // players.add(new HumanGUIPlayer(ac));
 
 
         /* Game parameter configuration. Set to null to ignore and use default parameters */

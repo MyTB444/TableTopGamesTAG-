@@ -1,233 +1,285 @@
-Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
-Alpha calculations using Delta Ordinal
-Alpha: 10.0
-	0.977	FirstAction
-	0.000	random
-	0.023	osla
+Game: SushiGo, Players: 4, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 1
+BasicMCTS got 3.00 points. BasicMCTS won 12.5% of the 24 games of the tournament. BasicMCTS won 12.5% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 28.58.
+BasicMCTS won 12.5% of the 24 games against BasicMCTS.
+BasicMCTS won 12.5% of the 24 games against BasicMCTS.
+BasicMCTS won 12.5% of the 24 games against BasicMCTS.
 
-Transition matrix for alpha = 10.0
-0.977	0.000	0.023	
-0.651	0.000	0.349	
-0.977	0.000	0.023	
-B matrix for alpha = 10.0
-3.287	0.645	1.227	
-0.645	0.546	0.644	
-1.227	0.644	1.078	
-Alpha calculations using Win Rate
-Alpha: 10.0
-	0.977	FirstAction
-	0.000	random
-	0.023	osla
+BasicMCTS got 2.50 points. BasicMCTS won 8.3% of the 24 games of the tournament. BasicMCTS won 8.3% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 29.63.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
 
-Transition matrix for alpha = 10.0
-0.977	0.000	0.023	
-0.651	0.000	0.349	
-0.977	0.000	0.023	
-B matrix for alpha = 10.0
-3.287	0.645	1.227	
-0.645	0.546	0.644	
-1.227	0.644	1.078	
-FirstAction got 51.00 points. FirstAction won 53.1% of the 96 games of the tournament. FirstAction won 79.7% of the 64 games it played during the tournament.
-FirstAction got a mean score of 0.59.
-FirstAction won 90.6% of the 32 games against random.
-FirstAction won 68.8% of the 32 games against osla.
+BasicMCTS got 2.00 points. BasicMCTS won 8.3% of the 24 games of the tournament. BasicMCTS won 8.3% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 28.75.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
+BasicMCTS won 8.3% of the 24 games against BasicMCTS.
 
-random got 7.00 points. random won 7.3% of the 96 games of the tournament. random won 10.9% of the 64 games it played during the tournament.
-random got a mean score of -0.78.
-random won 9.4% of the 32 games against FirstAction.
-random won 12.5% of the 32 games against osla.
-
-osla got 38.00 points. osla won 39.6% of the 96 games of the tournament. osla won 59.4% of the 64 games it played during the tournament.
-osla got a mean score of 0.19.
-osla won 31.3% of the 32 games against FirstAction.
-osla won 87.5% of the 32 games against random.
+BasicMCTS got 16.50 points. BasicMCTS won 66.7% of the 24 games of the tournament. BasicMCTS won 66.7% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 39.17.
+BasicMCTS won 66.7% of the 24 games against BasicMCTS.
+BasicMCTS won 66.7% of the 24 games against BasicMCTS.
+BasicMCTS won 66.7% of the 24 games against BasicMCTS.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-FirstAction: Win rate 0.80 +/- 0.050	Mean Ordinal 1.20 +/- 0.05
-osla: Win rate 0.59 +/- 0.061	Mean Ordinal 1.41 +/- 0.06
-random: Win rate 0.11 +/- 0.039	Mean Ordinal 1.89 +/- 0.04
+BasicMCTS: Win rate 0.69 +/- 0.092	Mean Ordinal 1.42 +/- 0.15
+BasicMCTS: Win rate 0.13 +/- 0.068	Mean Ordinal 2.92 +/- 0.21
+BasicMCTS: Win rate 0.10 +/- 0.059	Mean Ordinal 2.79 +/- 0.21
+BasicMCTS: Win rate 0.08 +/- 0.056	Mean Ordinal 2.79 +/- 0.18
 
-Alpha-rank by Win Rate
-	FirstAction                   	0.98
-	osla                          	0.02
-	random                        	0.00
+Game: SushiGo, Players: 4, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 1
+BasicMCTS got 7.00 points. BasicMCTS won 29.2% of the 24 games of the tournament. BasicMCTS won 29.2% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 31.08.
+BasicMCTS won 29.2% of the 24 games against BasicMCTS.
+BasicMCTS won 29.2% of the 24 games against BasicMCTS.
+BasicMCTS won 29.2% of the 24 games against BasicMCTS.
 
-Alpha-rank by Ordinal Position
-	FirstAction                   	0.98
-	osla                          	0.02
-	random                        	0.00
+BasicMCTS got 9.00 points. BasicMCTS won 37.5% of the 24 games of the tournament. BasicMCTS won 37.5% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 31.04.
+BasicMCTS won 37.5% of the 24 games against BasicMCTS.
+BasicMCTS won 37.5% of the 24 games against BasicMCTS.
+BasicMCTS won 37.5% of the 24 games against BasicMCTS.
 
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-FirstAction got 29.50 points. FirstAction won 29.0% of the 100 games of the tournament. FirstAction won 29.0% of the 100 games it played during the tournament.
-FirstAction got a mean score of -0.41.
-FirstAction won 29.0% of the 100 games against osla.
+BasicMCTS got 4.00 points. BasicMCTS won 16.7% of the 24 games of the tournament. BasicMCTS won 16.7% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 28.08.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
 
-osla got 70.50 points. osla won 70.0% of the 100 games of the tournament. osla won 70.0% of the 100 games it played during the tournament.
-osla got a mean score of 0.41.
-osla won 70.0% of the 100 games against FirstAction.
-
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-osla: Win rate 0.71 +/- 0.045	Mean Ordinal 1.29 +/- 0.05
-FirstAction: Win rate 0.30 +/- 0.045	Mean Ordinal 1.70 +/- 0.05
-
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
-random1 got 39.50 points. random1 won 1.1% of the 1000 games of the tournament. random1 won 1.1% of the 1000 games it played during the tournament.
-random1 got a mean score of -0.92.
-random1 won 1.1% of the 1000 games against BasicMCTS.
-
-BasicMCTS got 960.50 points. BasicMCTS won 93.2% of the 1000 games of the tournament. BasicMCTS won 93.2% of the 1000 games it played during the tournament.
-BasicMCTS got a mean score of 0.92.
-BasicMCTS won 93.2% of the 1000 games against random1.
+BasicMCTS got 4.00 points. BasicMCTS won 16.7% of the 24 games of the tournament. BasicMCTS won 16.7% of the 24 games it played during the tournament.
+BasicMCTS got a mean score of 29.67.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
+BasicMCTS won 16.7% of the 24 games against BasicMCTS.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-BasicMCTS: Win rate 0.96 +/- 0.005	Mean Ordinal 1.01 +/- 0.00
-random1: Win rate 0.04 +/- 0.005	Mean Ordinal 1.93 +/- 0.01
+BasicMCTS: Win rate 0.38 +/- 0.099	Mean Ordinal 2.13 +/- 0.21
+BasicMCTS: Win rate 0.29 +/- 0.093	Mean Ordinal 2.17 +/- 0.19
+BasicMCTS: Win rate 0.17 +/- 0.076	Mean Ordinal 3.00 +/- 0.24
+BasicMCTS: Win rate 0.17 +/- 0.076	Mean Ordinal 2.63 +/- 0.22
 
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
-random1 got 33.50 points. random1 won 0.5% of the 1000 games of the tournament. random1 won 0.5% of the 1000 games it played during the tournament.
-random1 got a mean score of -0.93.
-random1 won 0.5% of the 1000 games against BasicMCTS.
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
+BasicMCTS got 24.00 points. BasicMCTS won 25.0% of the 96 games of the tournament. BasicMCTS won 25.0% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 36.66.
+BasicMCTS won 25.0% of the 96 games against BasicMCTS.
+BasicMCTS won 25.0% of the 96 games against BasicMCTS.
 
-BasicMCTS got 966.50 points. BasicMCTS won 93.8% of the 1000 games of the tournament. BasicMCTS won 93.8% of the 1000 games it played during the tournament.
-BasicMCTS got a mean score of 0.93.
-BasicMCTS won 93.8% of the 1000 games against random1.
+BasicMCTS got 16.00 points. BasicMCTS won 15.6% of the 96 games of the tournament. BasicMCTS won 15.6% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 35.11.
+BasicMCTS won 15.6% of the 96 games against BasicMCTS.
+BasicMCTS won 15.6% of the 96 games against BasicMCTS.
 
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-BasicMCTS: Win rate 0.97 +/- 0.004	Mean Ordinal 1.01 +/- 0.00
-random1: Win rate 0.03 +/- 0.004	Mean Ordinal 1.94 +/- 0.01
-
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
-random1 got 40.00 points. random1 won 1.0% of the 1000 games of the tournament. random1 won 1.0% of the 1000 games it played during the tournament.
-random1 got a mean score of -0.92.
-random1 won 1.0% of the 1000 games against BasicMCTS.
-
-BasicMCTS got 960.00 points. BasicMCTS won 93.0% of the 1000 games of the tournament. BasicMCTS won 93.0% of the 1000 games it played during the tournament.
-BasicMCTS got a mean score of 0.92.
-BasicMCTS won 93.0% of the 1000 games against random1.
+BasicMCTS got 56.00 points. BasicMCTS won 57.3% of the 96 games of the tournament. BasicMCTS won 57.3% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 42.84.
+BasicMCTS won 57.3% of the 96 games against BasicMCTS.
+BasicMCTS won 57.3% of the 96 games against BasicMCTS.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-BasicMCTS: Win rate 0.96 +/- 0.005	Mean Ordinal 1.01 +/- 0.00
-random1: Win rate 0.04 +/- 0.005	Mean Ordinal 1.93 +/- 0.01
+BasicMCTS: Win rate 0.58 +/- 0.050	Mean Ordinal 1.54 +/- 0.07
+BasicMCTS: Win rate 0.25 +/- 0.044	Mean Ordinal 2.13 +/- 0.08
+BasicMCTS: Win rate 0.17 +/- 0.037	Mean Ordinal 2.30 +/- 0.08
 
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
-FirstAction got 1.00 points. FirstAction won 0.0% of the 1000 games of the tournament. FirstAction won 0.0% of the 1000 games it played during the tournament.
-FirstAction got a mean score of -1.00.
-FirstAction won 0.0% of the 1000 games against BasicMCTS.
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
+BasicMCTS got 20.00 points. BasicMCTS won 20.8% of the 96 games of the tournament. BasicMCTS won 20.8% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 34.15.
+BasicMCTS won 20.8% of the 96 games against BasicMCTS.
+BasicMCTS won 20.8% of the 96 games against BasicMCTSAssignment.
 
-BasicMCTS got 999.00 points. BasicMCTS won 99.8% of the 1000 games of the tournament. BasicMCTS won 99.8% of the 1000 games it played during the tournament.
-BasicMCTS got a mean score of 1.00.
-BasicMCTS won 99.8% of the 1000 games against FirstAction.
+BasicMCTS got 22.00 points. BasicMCTS won 22.9% of the 96 games of the tournament. BasicMCTS won 22.9% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 35.71.
+BasicMCTS won 22.9% of the 96 games against BasicMCTS.
+BasicMCTS won 22.9% of the 96 games against BasicMCTSAssignment.
 
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-BasicMCTS: Win rate 1.00 +/- 0.001	Mean Ordinal 1.00 +/- 0.00
-FirstAction: Win rate 0.00 +/- 0.001	Mean Ordinal 2.00 +/- 0.00
-
-Game: TicTacToe, Players: 2, Mode: EXHAUSTIVE, TotalGames: 1000, GamesPerMatchup: 500
-random1 got 0.00 points. random1 won 0.0% of the 1000 games of the tournament. random1 won 0.0% of the 1000 games it played during the tournament.
-random1 got a mean score of -1.00.
-random1 won 0.0% of the 1000 games against BasicMCTS.
-
-BasicMCTS got 1000.00 points. BasicMCTS won 100.0% of the 1000 games of the tournament. BasicMCTS won 100.0% of the 1000 games it played during the tournament.
-BasicMCTS got a mean score of 1.00.
-BasicMCTS won 100.0% of the 1000 games against random1.
+BasicMCTSAssignment got 54.00 points. BasicMCTSAssignment won 56.3% of the 96 games of the tournament. BasicMCTSAssignment won 56.3% of the 96 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 40.91.
+BasicMCTSAssignment won 56.3% of the 96 games against BasicMCTS.
+BasicMCTSAssignment won 56.3% of the 96 games against BasicMCTS.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-BasicMCTS: Win rate 1.00 +/- 0.000	Mean Ordinal 1.00 +/- 0.00
-random1: Win rate 0.00 +/- 0.000	Mean Ordinal 2.00 +/- 0.00
+BasicMCTSAssignment: Win rate 0.56 +/- 0.051	Mean Ordinal 1.54 +/- 0.07
+BasicMCTS: Win rate 0.23 +/- 0.043	Mean Ordinal 2.11 +/- 0.08
+BasicMCTS: Win rate 0.21 +/- 0.041	Mean Ordinal 2.32 +/- 0.08
 
-Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-random1 got 70.00 points. random1 won 70.0% of the 100 games of the tournament. random1 won 70.0% of the 100 games it played during the tournament.
-random1 got a mean score of 0.40.
-random1 won 70.0% of the 100 games against rmhc.
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
+BasicMCTS got 5.00 points. BasicMCTS won 5.2% of the 96 games of the tournament. BasicMCTS won 5.2% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 36.89.
+BasicMCTS won 5.2% of the 96 games against mcts.
+BasicMCTS won 5.2% of the 96 games against BasicMCTSAssignment.
 
-rmhc got 30.00 points. rmhc won 30.0% of the 100 games of the tournament. rmhc won 30.0% of the 100 games it played during the tournament.
-rmhc got a mean score of -0.40.
-rmhc won 30.0% of the 100 games against random1.
+mcts got 85.00 points. mcts won 88.5% of the 96 games of the tournament. mcts won 88.5% of the 96 games it played during the tournament.
+mcts got a mean score of 53.49.
+mcts won 88.5% of the 96 games against BasicMCTS.
+mcts won 88.5% of the 96 games against BasicMCTSAssignment.
 
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-random1: Win rate 0.70 +/- 0.046	Mean Ordinal 1.30 +/- 0.05
-rmhc: Win rate 0.30 +/- 0.046	Mean Ordinal 1.70 +/- 0.05
-
-Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-random1 got 69.00 points. random1 won 69.0% of the 100 games of the tournament. random1 won 69.0% of the 100 games it played during the tournament.
-random1 got a mean score of 0.38.
-random1 won 69.0% of the 100 games against rmhc.
-
-rmhc got 31.00 points. rmhc won 31.0% of the 100 games of the tournament. rmhc won 31.0% of the 100 games it played during the tournament.
-rmhc got a mean score of -0.38.
-rmhc won 31.0% of the 100 games against random1.
+BasicMCTSAssignment got 6.00 points. BasicMCTSAssignment won 6.3% of the 96 games of the tournament. BasicMCTSAssignment won 6.3% of the 96 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 38.07.
+BasicMCTSAssignment won 6.3% of the 96 games against BasicMCTS.
+BasicMCTSAssignment won 6.3% of the 96 games against mcts.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-random1: Win rate 0.69 +/- 0.046	Mean Ordinal 1.31 +/- 0.05
-rmhc: Win rate 0.31 +/- 0.046	Mean Ordinal 1.69 +/- 0.05
+mcts: Win rate 0.89 +/- 0.033	Mean Ordinal 1.13 +/- 0.04
+BasicMCTSAssignment: Win rate 0.06 +/- 0.025	Mean Ordinal 2.38 +/- 0.06
+BasicMCTS: Win rate 0.05 +/- 0.023	Mean Ordinal 2.50 +/- 0.06
 
-Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-random1 got 50.00 points. random1 won 50.0% of the 100 games of the tournament. random1 won 50.0% of the 100 games it played during the tournament.
-random1 got a mean score of 0.00.
-random1 won 50.0% of the 100 games against rmhc.
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 16
+BasicMCTS got 72.00 points. BasicMCTS won 75.0% of the 96 games of the tournament. BasicMCTS won 75.0% of the 96 games it played during the tournament.
+BasicMCTS got a mean score of 51.21.
+BasicMCTS won 75.0% of the 96 games against ImprovedBasicMCTSAssignment.
+BasicMCTS won 75.0% of the 96 games against BasicMCTSAssignment.
 
-rmhc got 50.00 points. rmhc won 50.0% of the 100 games of the tournament. rmhc won 50.0% of the 100 games it played during the tournament.
-rmhc got a mean score of 0.00.
-rmhc won 50.0% of the 100 games against random1.
+ImprovedBasicMCTSAssignment got 11.50 points. ImprovedBasicMCTSAssignment won 11.5% of the 96 games of the tournament. ImprovedBasicMCTSAssignment won 11.5% of the 96 games it played during the tournament.
+ImprovedBasicMCTSAssignment got a mean score of 35.36.
+ImprovedBasicMCTSAssignment won 11.5% of the 96 games against BasicMCTS.
+ImprovedBasicMCTSAssignment won 11.5% of the 96 games against BasicMCTSAssignment.
 
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-random1: Win rate 0.50 +/- 0.050	Mean Ordinal 1.50 +/- 0.05
-rmhc: Win rate 0.50 +/- 0.050	Mean Ordinal 1.50 +/- 0.05
-
-Game: Connect4, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-random1 got 46.00 points. random1 won 46.0% of the 100 games of the tournament. random1 won 46.0% of the 100 games it played during the tournament.
-random1 got a mean score of -0.08.
-random1 won 46.0% of the 100 games against rmhc.
-
-rmhc got 54.00 points. rmhc won 54.0% of the 100 games of the tournament. rmhc won 54.0% of the 100 games it played during the tournament.
-rmhc got a mean score of 0.08.
-rmhc won 54.0% of the 100 games against random1.
+BasicMCTSAssignment got 12.50 points. BasicMCTSAssignment won 12.5% of the 96 games of the tournament. BasicMCTSAssignment won 12.5% of the 96 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 35.72.
+BasicMCTSAssignment won 12.5% of the 96 games against BasicMCTS.
+BasicMCTSAssignment won 12.5% of the 96 games against ImprovedBasicMCTSAssignment.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-rmhc: Win rate 0.54 +/- 0.050	Mean Ordinal 1.46 +/- 0.05
-random1: Win rate 0.46 +/- 0.050	Mean Ordinal 1.54 +/- 0.05
+BasicMCTS: Win rate 0.75 +/- 0.044	Mean Ordinal 1.32 +/- 0.06
+BasicMCTSAssignment: Win rate 0.13 +/- 0.034	Mean Ordinal 2.33 +/- 0.07
+ImprovedBasicMCTSAssignment: Win rate 0.12 +/- 0.033	Mean Ordinal 2.32 +/- 0.07
 
-Game: CantStop, Players: 2, Mode: EXHAUSTIVE, TotalGames: 100, GamesPerMatchup: 50
-rmhc got 56.00 points. rmhc won 56.0% of the 100 games of the tournament. rmhc won 56.0% of the 100 games it played during the tournament.
-rmhc got a mean score of 2.40.
-rmhc won 56.0% of the 100 games against rhea.
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 48, GamesPerMatchup: 8
+BasicMCTS got 33.00 points. BasicMCTS won 68.8% of the 48 games of the tournament. BasicMCTS won 68.8% of the 48 games it played during the tournament.
+BasicMCTS got a mean score of 45.13.
+BasicMCTS won 68.8% of the 48 games against ImprovedBasicMCTSAssignment.
+BasicMCTS won 68.8% of the 48 games against BasicMCTSAssignment.
 
-rhea got 44.00 points. rhea won 44.0% of the 100 games of the tournament. rhea won 44.0% of the 100 games it played during the tournament.
-rhea got a mean score of 2.22.
-rhea won 44.0% of the 100 games against rmhc.
+ImprovedBasicMCTSAssignment got 9.00 points. ImprovedBasicMCTSAssignment won 18.8% of the 48 games of the tournament. ImprovedBasicMCTSAssignment won 18.8% of the 48 games it played during the tournament.
+ImprovedBasicMCTSAssignment got a mean score of 35.35.
+ImprovedBasicMCTSAssignment won 18.8% of the 48 games against BasicMCTS.
+ImprovedBasicMCTSAssignment won 18.8% of the 48 games against BasicMCTSAssignment.
 
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-rmhc: Win rate 0.56 +/- 0.050	Mean Ordinal 1.44 +/- 0.05
-rhea: Win rate 0.44 +/- 0.050	Mean Ordinal 1.56 +/- 0.05
-
-Game: SushiGo, Players: 4, Mode: EXHAUSTIVE, TotalGames: 96, GamesPerMatchup: 4
-BasicMCTS got 37.00 points. BasicMCTS won 37.5% of the 96 games of the tournament. BasicMCTS won 37.5% of the 96 games it played during the tournament.
-BasicMCTS got a mean score of 33.58.
-BasicMCTS won 37.5% of the 96 games against random.
-BasicMCTS won 37.5% of the 96 games against osla.
-BasicMCTS won 37.5% of the 96 games against rhea.
-
-random got 8.00 points. random won 8.3% of the 96 games of the tournament. random won 8.3% of the 96 games it played during the tournament.
-random got a mean score of 25.10.
-random won 8.3% of the 96 games against BasicMCTS.
-random won 8.3% of the 96 games against osla.
-random won 8.3% of the 96 games against rhea.
-
-osla got 3.00 points. osla won 3.1% of the 96 games of the tournament. osla won 3.1% of the 96 games it played during the tournament.
-osla got a mean score of 24.82.
-osla won 3.1% of the 96 games against BasicMCTS.
-osla won 3.1% of the 96 games against random.
-osla won 3.1% of the 96 games against rhea.
-
-rhea got 48.00 points. rhea won 49.0% of the 96 games of the tournament. rhea won 49.0% of the 96 games it played during the tournament.
-rhea got a mean score of 35.57.
-rhea won 49.0% of the 96 games against BasicMCTS.
-rhea won 49.0% of the 96 games against random.
-rhea won 49.0% of the 96 games against osla.
+BasicMCTSAssignment got 6.00 points. BasicMCTSAssignment won 12.5% of the 48 games of the tournament. BasicMCTSAssignment won 12.5% of the 48 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 35.48.
+BasicMCTSAssignment won 12.5% of the 48 games against BasicMCTS.
+BasicMCTSAssignment won 12.5% of the 48 games against ImprovedBasicMCTSAssignment.
 
 ---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-rhea: Win rate 0.50 +/- 0.050	Mean Ordinal 1.70 +/- 0.09
-BasicMCTS: Win rate 0.39 +/- 0.049	Mean Ordinal 1.93 +/- 0.10
-random: Win rate 0.08 +/- 0.028	Mean Ordinal 3.15 +/- 0.10
-osla: Win rate 0.03 +/- 0.018	Mean Ordinal 3.17 +/- 0.08
+BasicMCTS: Win rate 0.69 +/- 0.067	Mean Ordinal 1.48 +/- 0.11
+ImprovedBasicMCTSAssignment: Win rate 0.19 +/- 0.056	Mean Ordinal 2.21 +/- 0.11
+BasicMCTSAssignment: Win rate 0.13 +/- 0.048	Mean Ordinal 2.27 +/- 0.10
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 48, GamesPerMatchup: 8
+BasicMCTS got 17.50 points. BasicMCTS won 35.4% of the 48 games of the tournament. BasicMCTS won 35.4% of the 48 games it played during the tournament.
+BasicMCTS got a mean score of 33.81.
+BasicMCTS won 35.4% of the 48 games against ImprovedBasicMCTSAssignment.
+BasicMCTS won 35.4% of the 48 games against BasicMCTSAssignment.
+
+ImprovedBasicMCTSAssignment got 17.50 points. ImprovedBasicMCTSAssignment won 35.4% of the 48 games of the tournament. ImprovedBasicMCTSAssignment won 35.4% of the 48 games it played during the tournament.
+ImprovedBasicMCTSAssignment got a mean score of 33.27.
+ImprovedBasicMCTSAssignment won 35.4% of the 48 games against BasicMCTS.
+ImprovedBasicMCTSAssignment won 35.4% of the 48 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 13.00 points. BasicMCTSAssignment won 25.0% of the 48 games of the tournament. BasicMCTSAssignment won 25.0% of the 48 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 33.77.
+BasicMCTSAssignment won 25.0% of the 48 games against BasicMCTS.
+BasicMCTSAssignment won 25.0% of the 48 games against ImprovedBasicMCTSAssignment.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.36 +/- 0.069	Mean Ordinal 2.04 +/- 0.13
+ImprovedBasicMCTSAssignment: Win rate 0.36 +/- 0.069	Mean Ordinal 1.92 +/- 0.12
+BasicMCTSAssignment: Win rate 0.27 +/- 0.062	Mean Ordinal 1.98 +/- 0.11
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 48, GamesPerMatchup: 8
+BasicMCTS got 19.00 points. BasicMCTS won 39.6% of the 48 games of the tournament. BasicMCTS won 39.6% of the 48 games it played during the tournament.
+BasicMCTS got a mean score of 38.15.
+BasicMCTS won 39.6% of the 48 games against ImprovedBasicMCTSAssignment.
+BasicMCTS won 39.6% of the 48 games against BasicMCTSAssignment.
+
+ImprovedBasicMCTSAssignment got 10.00 points. ImprovedBasicMCTSAssignment won 20.8% of the 48 games of the tournament. ImprovedBasicMCTSAssignment won 20.8% of the 48 games it played during the tournament.
+ImprovedBasicMCTSAssignment got a mean score of 36.38.
+ImprovedBasicMCTSAssignment won 20.8% of the 48 games against BasicMCTS.
+ImprovedBasicMCTSAssignment won 20.8% of the 48 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 19.00 points. BasicMCTSAssignment won 39.6% of the 48 games of the tournament. BasicMCTSAssignment won 39.6% of the 48 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 38.71.
+BasicMCTSAssignment won 39.6% of the 48 games against BasicMCTS.
+BasicMCTSAssignment won 39.6% of the 48 games against ImprovedBasicMCTSAssignment.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.40 +/- 0.071	Mean Ordinal 1.94 +/- 0.12
+BasicMCTSAssignment: Win rate 0.40 +/- 0.071	Mean Ordinal 1.85 +/- 0.11
+ImprovedBasicMCTSAssignment: Win rate 0.21 +/- 0.059	Mean Ordinal 2.21 +/- 0.11
+
+Game: SushiGo, Players: 2, Mode: EXHAUSTIVE, TotalGames: 50, GamesPerMatchup: 25
+BasicMCTS got 42.00 points. BasicMCTS won 84.0% of the 50 games of the tournament. BasicMCTS won 84.0% of the 50 games it played during the tournament.
+BasicMCTS got a mean score of 57.96.
+BasicMCTS won 84.0% of the 50 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 8.00 points. BasicMCTSAssignment won 16.0% of the 50 games of the tournament. BasicMCTSAssignment won 16.0% of the 50 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 46.08.
+BasicMCTSAssignment won 16.0% of the 50 games against BasicMCTS.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.84 +/- 0.052	Mean Ordinal 1.16 +/- 0.05
+BasicMCTSAssignment: Win rate 0.16 +/- 0.052	Mean Ordinal 1.84 +/- 0.05
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 48, GamesPerMatchup: 8
+BasicMCTS got 8.00 points. BasicMCTS won 16.7% of the 48 games of the tournament. BasicMCTS won 16.7% of the 48 games it played during the tournament.
+BasicMCTS got a mean score of 37.35.
+BasicMCTS won 16.7% of the 48 games against BasicMCTS.
+BasicMCTS won 16.7% of the 48 games against BasicMCTSAssignment.
+
+BasicMCTS got 15.00 points. BasicMCTS won 29.2% of the 48 games of the tournament. BasicMCTS won 29.2% of the 48 games it played during the tournament.
+BasicMCTS got a mean score of 38.88.
+BasicMCTS won 29.2% of the 48 games against BasicMCTS.
+BasicMCTS won 29.2% of the 48 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 25.00 points. BasicMCTSAssignment won 50.0% of the 48 games of the tournament. BasicMCTSAssignment won 50.0% of the 48 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 42.44.
+BasicMCTSAssignment won 50.0% of the 48 games against BasicMCTS.
+BasicMCTSAssignment won 50.0% of the 48 games against BasicMCTS.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTSAssignment: Win rate 0.52 +/- 0.071	Mean Ordinal 1.60 +/- 0.11
+BasicMCTS: Win rate 0.31 +/- 0.065	Mean Ordinal 2.02 +/- 0.12
+BasicMCTS: Win rate 0.17 +/- 0.054	Mean Ordinal 2.31 +/- 0.11
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 6, GamesPerMatchup: 1
+BasicMCTS got 4.00 points. BasicMCTS won 66.7% of the 6 games of the tournament. BasicMCTS won 66.7% of the 6 games it played during the tournament.
+BasicMCTS got a mean score of 40.00.
+BasicMCTS won 66.7% of the 6 games against BasicMCTS.
+BasicMCTS won 66.7% of the 6 games against BasicMCTSAssignment.
+
+BasicMCTS got 0.00 points. BasicMCTS won 0.0% of the 6 games of the tournament. BasicMCTS won 0.0% of the 6 games it played during the tournament.
+BasicMCTS got a mean score of 29.50.
+BasicMCTS won 0.0% of the 6 games against BasicMCTS.
+BasicMCTS won 0.0% of the 6 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 2.00 points. BasicMCTSAssignment won 33.3% of the 6 games of the tournament. BasicMCTSAssignment won 33.3% of the 6 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 41.33.
+BasicMCTSAssignment won 33.3% of the 6 games against BasicMCTS.
+BasicMCTSAssignment won 33.3% of the 6 games against BasicMCTS.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTS: Win rate 0.67 +/- 0.192	Mean Ordinal 1.67 +/- 0.38
+BasicMCTSAssignment: Win rate 0.33 +/- 0.192	Mean Ordinal 1.67 +/- 0.19
+BasicMCTS: Win rate 0.00 +/- 0.000	Mean Ordinal 2.67 +/- 0.19
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 348, GamesPerMatchup: 58
+BasicMCTS got 79.00 points. BasicMCTS won 22.4% of the 348 games of the tournament. BasicMCTS won 22.4% of the 348 games it played during the tournament.
+BasicMCTS got a mean score of 37.83.
+BasicMCTS won 22.4% of the 348 games against BasicMCTS.
+BasicMCTS won 22.4% of the 348 games against BasicMCTSAssignment.
+
+BasicMCTS got 89.50 points. BasicMCTS won 25.6% of the 348 games of the tournament. BasicMCTS won 25.6% of the 348 games it played during the tournament.
+BasicMCTS got a mean score of 38.22.
+BasicMCTS won 25.6% of the 348 games against BasicMCTS.
+BasicMCTS won 25.6% of the 348 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 179.50 points. BasicMCTSAssignment won 51.4% of the 348 games of the tournament. BasicMCTSAssignment won 51.4% of the 348 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 42.27.
+BasicMCTSAssignment won 51.4% of the 348 games against BasicMCTS.
+BasicMCTSAssignment won 51.4% of the 348 games against BasicMCTS.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTSAssignment: Win rate 0.52 +/- 0.027	Mean Ordinal 1.64 +/- 0.04
+BasicMCTS: Win rate 0.26 +/- 0.023	Mean Ordinal 2.12 +/- 0.04
+BasicMCTS: Win rate 0.23 +/- 0.022	Mean Ordinal 2.22 +/- 0.04
 
