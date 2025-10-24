@@ -2,7 +2,7 @@
   "game" : "TicTacToe",
   "nPlayers" : 2,
   "mode" : "exhaustive",
-  "matchups": 1000,
+  "matchups": 500,
   "verbose": false,
   "listener": "json/listeners/basiclistener.json",
   "destDir": "outputdir",
