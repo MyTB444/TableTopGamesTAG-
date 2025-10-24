@@ -95,7 +95,7 @@ public class BackgammonBoardView extends JComponent {
 
         // Update pieces on points
         for (int player = 0; player < nPlayers; player++) {
-            piecesPerPoint[player] = state.getPlayerPieces(player);
+            //piecesPerPoint[player] = state.getPlayerPieces(player);
             piecesOnBar[player] = state.getPiecesOnBar(player);
             piecesBorneOff[player] = state.getPiecesBorneOff(player);
         }

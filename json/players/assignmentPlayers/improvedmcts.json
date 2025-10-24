@@ -15,5 +15,5 @@
   "useValueTieBreaking": true,
   "useActionOrdering": true,
   "budgetType": "BUDGET_TIME",
-  "budget": 40
+  "budget": 1000
 }
