@@ -291,7 +291,7 @@ public class Game {
                         wait();
                     }
                 } catch (InterruptedException e) {
-                    // Meh.
+                    // Meh.ss
                 }
                 int activePlayer = gameState.getCurrentPlayer();
                 if (debug) System.out.printf("Entered synchronized block in Game for player %s%n", activePlayer);
