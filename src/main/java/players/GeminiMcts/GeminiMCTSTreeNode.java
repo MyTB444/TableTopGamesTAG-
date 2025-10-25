@@ -208,11 +208,10 @@ public class GeminiMCTSTreeNode {
             if (rolloutState instanceof SGGameState) {
                 SGGameState sgState = (SGGameState) rolloutState;
 
-                if (sgState.isHandKnown(rootPlayer, currentPlayer)) {
-                    // PERFECT INFORMATION! Pick best action using heuristic
+                if (sgState.isHandKnown(rootPlayer, currentPlayer) && rolloutDepth == 0) {
+                    //System.out.println("DEBUG: Using smart rollout for player " + currentPlayer + " at depth " + rolloutDepth);
                     chosenAction = getBestAction(sgState, availableActions, currentPlayer);
                 } else {
-                    // Hand is not known, use random play
                     chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
                 }
             } else {
