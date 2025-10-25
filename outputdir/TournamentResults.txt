@@ -535,24 +535,3 @@ basicmcts: Win rate 0.42 +/- 0.101	Mean Ordinal 1.88 +/- 0.17
 GeminiMCTS[K=1.5,r=8]: Win rate 0.42 +/- 0.101	Mean Ordinal 1.75 +/- 0.15
 basicmcts2: Win rate 0.17 +/- 0.076	Mean Ordinal 2.38 +/- 0.15
 
-Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 4
-basicmcts got 7.00 points. basicmcts won 29.2% of the 24 games of the tournament. basicmcts won 29.2% of the 24 games it played during the tournament.
-basicmcts got a mean score of 43.50.
-basicmcts won 29.2% of the 24 games against basicmcts2.
-basicmcts won 29.2% of the 24 games against GeminiMCTS[K=1.5,r=8].
-
-basicmcts2 got 6.00 points. basicmcts2 won 25.0% of the 24 games of the tournament. basicmcts2 won 25.0% of the 24 games it played during the tournament.
-basicmcts2 got a mean score of 39.58.
-basicmcts2 won 25.0% of the 24 games against basicmcts.
-basicmcts2 won 25.0% of the 24 games against GeminiMCTS[K=1.5,r=8].
-
-GeminiMCTS[K=1.5,r=8] got 11.00 points. GeminiMCTS[K=1.5,r=8] won 45.8% of the 24 games of the tournament. GeminiMCTS[K=1.5,r=8] won 45.8% of the 24 games it played during the tournament.
-GeminiMCTS[K=1.5,r=8] got a mean score of 44.63.
-GeminiMCTS[K=1.5,r=8] won 45.8% of the 24 games against basicmcts.
-GeminiMCTS[K=1.5,r=8] won 45.8% of the 24 games against basicmcts2.
-
----- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
-GeminiMCTS[K=1.5,r=8]: Win rate 0.46 +/- 0.102	Mean Ordinal 1.83 +/- 0.17
-basicmcts: Win rate 0.29 +/- 0.093	Mean Ordinal 1.88 +/- 0.14
-basicmcts2: Win rate 0.25 +/- 0.088	Mean Ordinal 2.29 +/- 0.17
-
