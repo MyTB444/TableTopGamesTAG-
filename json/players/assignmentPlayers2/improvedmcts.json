@@ -1,0 +1,19 @@
+{
+  "class": "players.improvedBasisMCTS.ImprovedBasicMCTSParams",
+  "K": 1.0,
+  "rolloutLength": 0,
+  "maxTreeDepth": 30,
+  "heuristic": {
+    "class": "players.heuristics.ScoreHeuristic"
+  },
+  "useRAVE": true,
+  "raveK": 300,
+  "useProgressiveWidening": false,
+  "progressiveWideningAlpha": 0.5,
+  "progressiveWideningC": 2.0,
+  "useUCB1Tuned": false,
+  "useValueTieBreaking": true,
+  "useActionOrdering": true,
+  "budgetType": "BUDGET_TIME",
+  "budget": 500
+}

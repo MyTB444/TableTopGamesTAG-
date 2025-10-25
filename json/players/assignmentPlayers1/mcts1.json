@@ -1,10 +1,10 @@
 {
   "class" : "players.basicMCTSAssignment.BasicMCTSParams",
-  "K" : 1.0,
-  "rolloutLength" : 0,
+  "K" : 1.5,
+  "rolloutLength" : 3,
   "maxTreeDepth" : 30,
   "heuristic" : {
-    "class" : "games.sushigo.SGHeuristic"
+    "class" : "games.sushigo.SGHeuristicGemini"
   },
   "budgetType" : "BUDGET_TIME",
   "budget" : 500

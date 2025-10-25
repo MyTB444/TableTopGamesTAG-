@@ -283,3 +283,24 @@ BasicMCTSAssignment: Win rate 0.52 +/- 0.027	Mean Ordinal 1.64 +/- 0.04
 BasicMCTS: Win rate 0.26 +/- 0.023	Mean Ordinal 2.12 +/- 0.04
 BasicMCTS: Win rate 0.23 +/- 0.022	Mean Ordinal 2.22 +/- 0.04
 
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 348, GamesPerMatchup: 58
+basicmcts got 143.50 points. basicmcts won 41.1% of the 348 games of the tournament. basicmcts won 41.1% of the 348 games it played during the tournament.
+basicmcts got a mean score of 40.09.
+basicmcts won 41.1% of the 348 games against basicmcts1.
+basicmcts won 41.1% of the 348 games against BasicMCTSAssignment.
+
+basicmcts1 got 164.50 points. basicmcts1 won 47.1% of the 348 games of the tournament. basicmcts1 won 47.1% of the 348 games it played during the tournament.
+basicmcts1 got a mean score of 40.71.
+basicmcts1 won 47.1% of the 348 games against basicmcts.
+basicmcts1 won 47.1% of the 348 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 40.00 points. BasicMCTSAssignment won 11.5% of the 348 games of the tournament. BasicMCTSAssignment won 11.5% of the 348 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 32.92.
+BasicMCTSAssignment won 11.5% of the 348 games against basicmcts.
+BasicMCTSAssignment won 11.5% of the 348 games against basicmcts1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+basicmcts1: Win rate 0.47 +/- 0.027	Mean Ordinal 1.68 +/- 0.04
+basicmcts: Win rate 0.41 +/- 0.026	Mean Ordinal 1.77 +/- 0.04
+BasicMCTSAssignment: Win rate 0.11 +/- 0.017	Mean Ordinal 2.54 +/- 0.04
+
