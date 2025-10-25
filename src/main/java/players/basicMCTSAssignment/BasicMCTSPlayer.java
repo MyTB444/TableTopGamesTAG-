@@ -64,7 +64,12 @@ public class BasicMCTSPlayer extends AbstractPlayer {
 
     @Override
     public String toString() {
-        return "BasicMCTSAssignment";
+        BasicMCTSParams params = getParameters();
+        String heuristicName = params.heuristic.getClass().getSimpleName();
+        return String.format("MCTS[K=%.1f,r=%d,%s]",
+                params.K,
+                params.rolloutLength,
+                heuristicName);
     }
 
     @Override
