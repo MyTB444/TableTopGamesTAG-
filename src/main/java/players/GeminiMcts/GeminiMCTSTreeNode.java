@@ -1,8 +1,9 @@
-package players.GeminiMcts;
+package players.GeminiMcts; // Updated package
+
 import core.AbstractGameState;
 import core.actions.AbstractAction;
 import core.interfaces.IStateHeuristic;
-import games.sushigo.SGGameState;
+import games.sushigo.SGGameState; // Make sure this import path is correct
 import players.PlayerConstants;
 import utilities.ElapsedCpuTimer;
 
@@ -21,7 +22,7 @@ public class GeminiMCTSTreeNode {
     protected GeminiMCTSParams params;
 
     protected Map<AbstractAction, GeminiMCTSTreeNode> children = new HashMap<>();
-    
+
     protected double totValue = 0;
     protected int nVisits = 0;
     protected int fmCallsCount = 0;
@@ -36,7 +37,7 @@ public class GeminiMCTSTreeNode {
         this.params = player.getParameters();
         this.depth = parent == null ? 0 : parent.depth + 1;
         this.fmCallsCount = 0;
-        
+
         // Initialize children map with available actions
         if (gameState.isNotTerminal()) {
             for (AbstractAction action : player.getForwardModel().computeAvailableActions(state, player.getParameters().actionSpace)) {
@@ -68,13 +69,13 @@ public class GeminiMCTSTreeNode {
 
             // 1. Selection + Expansion
             GeminiMCTSTreeNode selected = treePolicy();
-            
+
             // 2. Simulation (Rollout) - THIS IS WHERE GEMINI'S SMART LOGIC IS
             double delta = selected.rollOut();
-            
+
             // 3. Backpropagation
             selected.backUp(delta);
-            
+
             numIters++;
 
             // Check stopping condition
@@ -150,6 +151,7 @@ public class GeminiMCTSTreeNode {
 
     /**
      * UCB selection.
+     * --- THIS CONTAINS THE FIX ---
      */
     private AbstractAction ucb() {
         AbstractAction bestAction = null;
@@ -159,16 +161,20 @@ public class GeminiMCTSTreeNode {
             GeminiMCTSTreeNode child = children.get(action);
             if (child == null)
                 throw new AssertionError("Should not be here");
-            
+
             if (bestAction == null)
                 bestAction = action;
 
             double childValue = child.totValue / (child.nVisits + params.epsilon);
             double explorationTerm = params.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
 
-            boolean iAmMoving = state.getCurrentPlayer() == player.getPlayerID();
-            double uctValue = iAmMoving ? childValue : -childValue;
-            uctValue += explorationTerm;
+            // *** START OF FIX ***
+            // We are in a 3-player game, so we always maximize our own score.
+            // The heuristic value is already from our (the root player's) perspective.
+            // We remove the (iAmMoving ? childValue : -childValue) negamax logic.
+            double uctValue = childValue + explorationTerm;
+            // *** END OF FIX ***
+
             uctValue = noise(uctValue, params.epsilon, rnd.nextDouble());
 
             if (uctValue > bestValue) {
@@ -186,10 +192,10 @@ public class GeminiMCTSTreeNode {
 
     /**
      * Perform a Monte Carlo rollout from this node.
-     * 
-     * --- THIS IS THE KEY "GEMINI" LOGIC ---
+     * * --- THIS IS THE KEY "GEMINI" LOGIC ---
      * When an opponent's hand is visible (isHandKnown), we pick the best action
-     * for them using the heuristic, instead of random.
+     * for them using the heuristic, but *only for the first step* of the rollout
+     * to keep simulations fast.
      */
     private double rollOut() {
         int rolloutDepth = 0;
@@ -200,7 +206,7 @@ public class GeminiMCTSTreeNode {
             if (availableActions.isEmpty()) break;
 
             AbstractAction chosenAction;
-            
+
             // --- GEMINI'S SMART SIMULATION LOGIC ---
             int rootPlayer = player.getPlayerID();
             int currentPlayer = rolloutState.getCurrentPlayer();
@@ -208,14 +214,15 @@ public class GeminiMCTSTreeNode {
             if (rolloutState instanceof SGGameState) {
                 SGGameState sgState = (SGGameState) rolloutState;
 
+                // Your correct optimization: only run smart logic at the first step
                 if (sgState.isHandKnown(rootPlayer, currentPlayer) && rolloutDepth == 0) {
-                    //System.out.println("DEBUG: Using smart rollout for player " + currentPlayer + " at depth " + rolloutDepth);
                     chosenAction = getBestAction(sgState, availableActions, currentPlayer);
                 } else {
+                    // Fallback to random for speed
                     chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
                 }
             } else {
-                // Fallback to random
+                // Fallback to random if not an SGGameState
                 chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
             }
             // --- END GEMINI LOGIC ---
@@ -227,10 +234,10 @@ public class GeminiMCTSTreeNode {
         // Evaluate final state
         IStateHeuristic heuristic = params.getStateHeuristic();
         double value = heuristic.evaluateState(rolloutState, player.getPlayerID());
-        
+
         if (Double.isNaN(value))
             throw new AssertionError("Illegal heuristic value - should be a number");
-        
+
         return value;
     }
 
@@ -245,7 +252,7 @@ public class GeminiMCTSTreeNode {
 
         for (AbstractAction action : actions) {
             AbstractGameState nextState = state.copy();
-            player.getForwardModel().next(nextState, action);
+            player.getForwardModel().next(nextState, action); // Note: This doesn't count FM calls for the root, which is fine
 
             double value = heuristic.evaluateState(nextState, playerToEvaluate);
 
@@ -254,11 +261,11 @@ public class GeminiMCTSTreeNode {
                 bestAction = action;
             }
         }
-        
+
         if (bestAction == null && !actions.isEmpty()) {
             return actions.get(rnd.nextInt(actions.size()));
         }
-        
+
         return bestAction;
     }
 
@@ -304,7 +311,14 @@ public class GeminiMCTSTreeNode {
         }
 
         if (bestAction == null) {
-            throw new AssertionError("Unexpected - no selection made.");
+            // Fallback in case no actions are expanded (e.g., extremely low budget)
+            if (children.isEmpty()) {
+                List<AbstractAction> actions = player.getForwardModel().computeAvailableActions(state, player.getParameters().actionSpace);
+                return actions.get(rnd.nextInt(actions.size()));
+            }
+            // Or pick randomly from available children
+            List<AbstractAction> childActions = new ArrayList<>(children.keySet());
+            return childActions.get(rnd.nextInt(childActions.size()));
         }
 
         return bestAction;
