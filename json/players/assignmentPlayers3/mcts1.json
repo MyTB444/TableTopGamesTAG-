@@ -1,7 +1,7 @@
 {
   "class" : "players.basicMCTSAssignment.BasicMCTSParams",
   "K" : 1.5,
-  "rolloutLength" :8,
+  "rolloutLength" : 0,
   "maxTreeDepth" : 30,
   "heuristic" : {
     "class" : "games.sushigo.SGHeuristicGemini"
