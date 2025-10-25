@@ -304,3 +304,66 @@ basicmcts1: Win rate 0.47 +/- 0.027	Mean Ordinal 1.68 +/- 0.04
 basicmcts: Win rate 0.41 +/- 0.026	Mean Ordinal 1.77 +/- 0.04
 BasicMCTSAssignment: Win rate 0.11 +/- 0.017	Mean Ordinal 2.54 +/- 0.04
 
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 4
+basicmcts got 9.00 points. basicmcts won 37.5% of the 24 games of the tournament. basicmcts won 37.5% of the 24 games it played during the tournament.
+basicmcts got a mean score of 40.29.
+basicmcts won 37.5% of the 24 games against basicmcts1.
+basicmcts won 37.5% of the 24 games against BasicMCTSAssignment.
+
+basicmcts1 got 11.00 points. basicmcts1 won 45.8% of the 24 games of the tournament. basicmcts1 won 45.8% of the 24 games it played during the tournament.
+basicmcts1 got a mean score of 42.58.
+basicmcts1 won 45.8% of the 24 games against basicmcts.
+basicmcts1 won 45.8% of the 24 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 4.00 points. BasicMCTSAssignment won 16.7% of the 24 games of the tournament. BasicMCTSAssignment won 16.7% of the 24 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 35.13.
+BasicMCTSAssignment won 16.7% of the 24 games against basicmcts.
+BasicMCTSAssignment won 16.7% of the 24 games against basicmcts1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+basicmcts1: Win rate 0.46 +/- 0.102	Mean Ordinal 1.71 +/- 0.15
+basicmcts: Win rate 0.38 +/- 0.099	Mean Ordinal 1.92 +/- 0.17
+BasicMCTSAssignment: Win rate 0.17 +/- 0.076	Mean Ordinal 2.38 +/- 0.15
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 4
+basicmcts got 7.00 points. basicmcts won 29.2% of the 24 games of the tournament. basicmcts won 29.2% of the 24 games it played during the tournament.
+basicmcts got a mean score of 40.58.
+basicmcts won 29.2% of the 24 games against basicmcts1.
+basicmcts won 29.2% of the 24 games against BasicMCTSAssignment.
+
+basicmcts1 got 6.00 points. basicmcts1 won 25.0% of the 24 games of the tournament. basicmcts1 won 25.0% of the 24 games it played during the tournament.
+basicmcts1 got a mean score of 39.42.
+basicmcts1 won 25.0% of the 24 games against basicmcts.
+basicmcts1 won 25.0% of the 24 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 11.00 points. BasicMCTSAssignment won 45.8% of the 24 games of the tournament. BasicMCTSAssignment won 45.8% of the 24 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 42.75.
+BasicMCTSAssignment won 45.8% of the 24 games against basicmcts.
+BasicMCTSAssignment won 45.8% of the 24 games against basicmcts1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+BasicMCTSAssignment: Win rate 0.46 +/- 0.102	Mean Ordinal 1.75 +/- 0.16
+basicmcts: Win rate 0.29 +/- 0.093	Mean Ordinal 2.08 +/- 0.17
+basicmcts1: Win rate 0.25 +/- 0.088	Mean Ordinal 2.17 +/- 0.16
+
+Game: SushiGo, Players: 3, Mode: EXHAUSTIVE, TotalGames: 24, GamesPerMatchup: 4
+basicmcts got 12.00 points. basicmcts won 50.0% of the 24 games of the tournament. basicmcts won 50.0% of the 24 games it played during the tournament.
+basicmcts got a mean score of 43.79.
+basicmcts won 50.0% of the 24 games against basicmcts1.
+basicmcts won 50.0% of the 24 games against BasicMCTSAssignment.
+
+basicmcts1 got 8.00 points. basicmcts1 won 33.3% of the 24 games of the tournament. basicmcts1 won 33.3% of the 24 games it played during the tournament.
+basicmcts1 got a mean score of 42.21.
+basicmcts1 won 33.3% of the 24 games against basicmcts.
+basicmcts1 won 33.3% of the 24 games against BasicMCTSAssignment.
+
+BasicMCTSAssignment got 4.00 points. BasicMCTSAssignment won 16.7% of the 24 games of the tournament. BasicMCTSAssignment won 16.7% of the 24 games it played during the tournament.
+BasicMCTSAssignment got a mean score of 38.25.
+BasicMCTSAssignment won 16.7% of the 24 games against basicmcts.
+BasicMCTSAssignment won 16.7% of the 24 games against basicmcts1.
+
+---- Ranking ---- (+/- are standard errors on the mean calculated using a Normal approximation) 
+basicmcts: Win rate 0.50 +/- 0.102	Mean Ordinal 1.79 +/- 0.18
+basicmcts1: Win rate 0.33 +/- 0.096	Mean Ordinal 1.88 +/- 0.15
+BasicMCTSAssignment: Win rate 0.17 +/- 0.076	Mean Ordinal 2.33 +/- 0.15
+
