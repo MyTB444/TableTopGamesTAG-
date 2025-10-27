@@ -1,15 +1,14 @@
-package players.GeminiMcts; // Updated package
+package players.GeminiMcts;
 
 import core.AbstractGameState;
 import core.actions.AbstractAction;
+import core.components.Counter;
 import core.interfaces.IStateHeuristic;
-import games.sushigo.SGGameState; // Make sure this import path is correct
+import games.sushigo.SGGameState;
 import players.PlayerConstants;
 import utilities.ElapsedCpuTimer;
 
-// --- IMPORTS FOR NEW FAST ROLLOUT ---
-// *** PLEASE CHECK THESE PATHS ***
-// You may need to change these imports to match your project structure.
+// --- IMPORTS FOR FAST ROLLOUT HELPER ---
 import games.sushigo.actions.ChooseCard;
 import games.sushigo.cards.SGCard;
 // --- END OF IMPORTS ---
@@ -57,7 +56,7 @@ public class GeminiMCTSTreeNode {
      * Performs full MCTS search, using the defined budget limits.
      */
     public void mctsSearch() {
-        // Variables for tracking time budget
+        // ... (Time budget code is all correct, no changes) ...
         double avgTimeTaken;
         double acumTimeTaken = 0;
         long remaining;
@@ -67,17 +66,16 @@ public class GeminiMCTSTreeNode {
             elapsedTimer.setMaxTimeMillis(params.budget);
         }
 
-        // Tracking number of iterations
         int numIters = 0;
         boolean stop = false;
 
         while (!stop) {
             ElapsedCpuTimer elapsedTimerIteration = new ElapsedCpuTimer();
 
-            // 1. Selection + Expansion
+            // 1. Selection + Expansion (NOW THE SMART PART)
             GeminiMCTSTreeNode selected = treePolicy();
 
-            // 2. Simulation (Rollout) - THIS IS WHERE GEMINI'S SMART LOGIC IS
+            // 2. Simulation (Rollout) (NOW 100% FAST)
             double delta = selected.rollOut();
 
             // 3. Backpropagation
@@ -85,7 +83,7 @@ public class GeminiMCTSTreeNode {
 
             numIters++;
 
-            // Check stopping condition
+            // ... (Stopping condition code is all correct, no changes) ...
             PlayerConstants budgetType = params.budgetType;
             if (budgetType == BUDGET_TIME) {
                 acumTimeTaken += (elapsedTimerIteration.elapsedMillis());
@@ -98,22 +96,51 @@ public class GeminiMCTSTreeNode {
                 stop = fmCallsCount > params.budget;
             }
         }
-        // Optional: Add your debug line here to check iteration count
-        // System.out.println(player.toString() + " completed " + numIters + " iterations.");
     }
 
     /**
      * Selection + expansion steps.
+     * --- THIS IS NOW THE CORE GEMINI LOGIC ---
      */
     private GeminiMCTSTreeNode treePolicy() {
         GeminiMCTSTreeNode cur = this;
 
         while (cur.state.isNotTerminal() && cur.depth < params.maxTreeDepth) {
+
+            // --- NEW GEMINI LOGIC: Smart Opponent Selection ---
+            int rootPlayer = player.getPlayerID();
+            int currentPlayer = cur.state.getCurrentPlayer();
+
+            if (currentPlayer != rootPlayer && cur.state instanceof SGGameState) {
+                SGGameState sgState = (SGGameState) cur.state;
+                if (sgState.isHandKnown(rootPlayer, currentPlayer)) {
+
+                    // This is an opponent with a known hand.
+                    // We don't use UCB. We *force* the "best" move for them.
+                    List<AbstractAction> availableActions = player.getForwardModel().computeAvailableActions(cur.state, player.getParameters().actionSpace);
+                    if (availableActions.isEmpty()) break; // Should not happen, but safeguard
+
+                    // Use our fast helper to predict their move
+                    AbstractAction bestOpponentAction = cur.getBestAction(sgState, availableActions, currentPlayer);
+
+                    // If we've never seen this move before, expand it
+                    if (cur.children.get(bestOpponentAction) == null) {
+                        return cur.expandSpecificAction(bestOpponentAction); // A new helper function
+                    } else {
+                        // We have seen it, traverse down this "forced" path
+                        cur = cur.children.get(bestOpponentAction);
+                        continue; // Restart the while loop from the new node
+                    }
+                }
+            }
+            // --- END OF NEW LOGIC ---
+
+            // If it's our move, or an opponent with an unknown hand, use standard MCTS
             List<AbstractAction> unexpanded = cur.unexpandedActions();
             if (!unexpanded.isEmpty()) {
-                return cur.expand();
+                return cur.expand(); // Standard random expansion
             } else {
-                AbstractAction actionChosen = cur.ucb();
+                AbstractAction actionChosen = cur.ucb(); // Standard UCB selection
                 cur = cur.children.get(actionChosen);
             }
         }
@@ -139,7 +166,14 @@ public class GeminiMCTSTreeNode {
     private GeminiMCTSTreeNode expand() {
         List<AbstractAction> notChosen = unexpandedActions();
         AbstractAction chosen = notChosen.get(rnd.nextInt(notChosen.size()));
+        return expandSpecificAction(chosen);
+    }
 
+    /**
+     * New Helper: Expands a *specific* action.
+     * Used by both standard expand() and our new smart treePolicy().
+     */
+    private GeminiMCTSTreeNode expandSpecificAction(AbstractAction chosen) {
         // Copy state and advance
         AbstractGameState nextState = state.copy();
         advance(nextState, chosen.copy());
@@ -178,7 +212,6 @@ public class GeminiMCTSTreeNode {
 
             // Correct 3-player UCB logic
             double uctValue = childValue + explorationTerm;
-
             uctValue = noise(uctValue, params.epsilon, rnd.nextDouble());
 
             if (uctValue > bestValue) {
@@ -196,6 +229,7 @@ public class GeminiMCTSTreeNode {
 
     /**
      * Perform a Monte Carlo rollout from this node.
+     * --- THIS IS NOW 100% FAST AND RANDOM ---
      */
     private double rollOut() {
         int rolloutDepth = 0;
@@ -205,36 +239,15 @@ public class GeminiMCTSTreeNode {
             List<AbstractAction> availableActions = player.getForwardModel().computeAvailableActions(rolloutState, player.getParameters().actionSpace);
             if (availableActions.isEmpty()) break;
 
-            AbstractAction chosenAction;
-
-            // --- GEMINI'S SMART SIMULATION LOGIC ---
-            int rootPlayer = player.getPlayerID();
-            int currentPlayer = rolloutState.getCurrentPlayer();
-
-            if (rolloutState instanceof SGGameState) {
-                SGGameState sgState = (SGGameState) rolloutState;
-
-                // Your correct optimization: only run smart logic at the first step
-                if (sgState.isHandKnown(rootPlayer, currentPlayer) && rolloutDepth == 0) {
-
-                    // *** USE THE NEW FAST-ACTION PICKER ***
-                    chosenAction = getBestAction(sgState, availableActions, currentPlayer);
-
-                } else {
-                    // Fallback to random for speed
-                    chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
-                }
-            } else {
-                // Fallback to random if not an SGGameState
-                chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
-            }
-            // --- END GEMINI LOGIC ---
+            // --- REVERTED TO 100% FAST RANDOM ROLLOUT ---
+            AbstractAction chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
+            // --- END OF REVERT ---
 
             advance(rolloutState, chosenAction);
             rolloutDepth++;
         }
 
-        // Evaluate final state
+        // Evaluate final state (this is where your SGHeuristicGemini is called)
         IStateHeuristic heuristic = params.getStateHeuristic();
         double value = heuristic.evaluateState(rolloutState, player.getPlayerID());
 
@@ -246,34 +259,39 @@ public class GeminiMCTSTreeNode {
 
     /**
      * Helper: finds the best action for a player from a known hand.
-     * --- STATE-AWARE FAST HEURISTIC ---
-     * Checks player's board to make context-aware decisions (Tempura pairs, Sashimi triples, Wasabi synergy)
+     * --- THIS IS THE CORRECTED, STATE-AWARE, FAST VERSION ---
+     * It now uses the correct API (getPlayedCardTypes) from SGGameState.
      */
     private AbstractAction getBestAction(SGGameState state, List<AbstractAction> actions, int playerToEvaluate) {
         AbstractAction bestAction = null;
         double bestValue = Double.NEGATIVE_INFINITY;
 
-        // Get counts of key cards the player has already played THIS ROUND
-        int tempuraCount = state.getPlayedCardTypes(SGCard.SGCardType.Tempura, playerToEvaluate).getValue();
-        int sashimiCount = state.getPlayedCardTypes(SGCard.SGCardType.Sashimi, playerToEvaluate).getValue();
-        int wasabiCount = state.getPlayedCardTypes(SGCard.SGCardType.Wasabi, playerToEvaluate).getValue();
+        // --- START OF FIX ---
+        // This is the correct way to get the player's board state,
+        // based on the logic in SGCard.java.
+        // This returns a Map<SGCardType, Counter>.
+        Map<SGCard.SGCardType, Counter> playerBoardCounters = state.getPlayedCardTypes()[playerToEvaluate];
 
-        // Check if there's an unused Wasabi on the board
-        // Wasabi stays until used, so if wasabi > 0, we can use it
-        boolean hasUnusedWasabi = wasabiCount > 0;
+        // Get the *values* from the counters. This is much faster (no loop).
+        int tempuraCount = playerBoardCounters.get(SGCard.SGCardType.Tempura).getValue();
+        int sashimiCount = playerBoardCounters.get(SGCard.SGCardType.Sashimi).getValue();
+        boolean hasUnusedWasabi = playerBoardCounters.get(SGCard.SGCardType.Wasabi).getValue() > 0;
+        // --- END OF FIX ---
 
         for (AbstractAction action : actions) {
 
-            if (action instanceof ChooseCard) {
-                ChooseCard chooseCard = (ChooseCard) action;
+            // Your existing logic for getting the card was correct
+            if (action instanceof games.sushigo.actions.ChooseCard) {
+                games.sushigo.actions.ChooseCard chooseCard = (games.sushigo.actions.ChooseCard) action;
                 SGCard card = (SGCard) chooseCard.getCard(state);
 
                 double value = 0;
 
-                // Context-aware card evaluation
+                // This switch statement logic remains the same, but now it's
+                // using the *correct* counts for hasUnusedWasabi, tempuraCount, etc.
                 switch (card.type) {
                     case SquidNigiri:
-                        value = hasUnusedWasabi ? 9.0 : 3.0; // 3x with Wasabi!
+                        value = hasUnusedWasabi ? 9.0 : 3.0; // HUGE bonus if we have wasabi
                         break;
                     case SalmonNigiri:
                         value = hasUnusedWasabi ? 6.0 : 2.0;
@@ -282,30 +300,31 @@ public class GeminiMCTSTreeNode {
                         value = hasUnusedWasabi ? 3.0 : 1.0;
                         break;
                     case Maki:
-                        value = card.count * 1.5; // 1.5, 3.0, or 4.5 based on maki roll count
+                        value = card.count * 1.5; // Upped value, Maki is important (1.5, 3.0, 4.5)
                         break;
                     case Pudding:
                         value = 1.0;
                         break;
                     case Tempura:
-                        // HUGE value if it completes a pair (odd count means we need 1 more)
+                        // Value is 5 if it completes a pair, otherwise 2.5
                         value = (tempuraCount % 2 == 1) ? 5.0 : 2.5;
                         break;
                     case Sashimi:
-                        // HUGE value if it completes a triple (count=2 means we need 1 more)
-                        value = (sashimiCount % 3 == 2) ? 10.0 : 3.0;
+                        // Value is 10 if it completes a set, otherwise 3.0
+                        value = (sashimiCount % 3 == 2) ? 10.0 : 3.0; // Upped base value
                         break;
                     case Dumpling:
-                        value = 1.5;
+                        value = 1.5; // Hard to value quickly, 1.5 is fine
                         break;
                     case Wasabi:
-                        value = -0.1; // Bad on its own
+                        // Simple logic: it's slightly bad on its own.
+                        value = -0.1;
                         break;
                     case Chopsticks:
-                        value = 0.5;
+                        value = 0.5; // Flexibility
                         break;
                     default:
-                        value = 0.5;
+                        value = 0.5; // Unknown card
                         break;
                 }
 
@@ -355,6 +374,7 @@ public class GeminiMCTSTreeNode {
      * Returns the best action from the root (most visited child).
      */
     public AbstractAction bestAction() {
+        // ... (This logic is all correct, no changes) ...
         double bestValue = -Double.MAX_VALUE;
         AbstractAction bestAction = null;
 
@@ -372,12 +392,10 @@ public class GeminiMCTSTreeNode {
         }
 
         if (bestAction == null) {
-            // Fallback in case no actions are expanded (e.g., extremely low budget)
             if (children.isEmpty()) {
                 List<AbstractAction> actions = player.getForwardModel().computeAvailableActions(state, player.getParameters().actionSpace);
                 return actions.get(rnd.nextInt(actions.size()));
             }
-            // Or pick randomly from available children
             List<AbstractAction> childActions = new ArrayList<>(children.keySet());
             return childActions.get(rnd.nextInt(childActions.size()));
         }
