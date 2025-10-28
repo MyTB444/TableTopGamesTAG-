@@ -27,7 +27,7 @@ public class ImprovedBasicMCTSPlayer extends AbstractPlayer {
     }
 
     public ImprovedBasicMCTSPlayer(long seed) {
-        super(new ImprovedBasicMCTSParams(), "Simplified Sushigo MCTS");
+        super(new ImprovedBasicMCTSParams(), "ImprovedSushigoMCTSPlayer");
         parameters.setRandomSeed(seed);
         rnd = new Random(seed);
 
