@@ -81,7 +81,7 @@ public class GeminiMCTSTreeNode {
 
     /**
      * --- mctsSearch ---
-     * Uses the simple static counter for logging.
+     * Uses the simple static counter for logging AND logs the K value used.
      */
     public void mctsSearch() {
         // --- Budget Declarations ---
@@ -97,19 +97,36 @@ public class GeminiMCTSTreeNode {
         // --- Performance Monitoring Setup ---
         long startTime = System.currentTimeMillis();
         int currentMainRound = -1; // Actual Main Round (1, 2, or 3)
+        int turnInRound = -1;      // Turn within the round (0-8+)
 
-        // --- Update Static Counters ---
+        // --- Determine K and Update Static Counters ---
+        double kUsedForSearch = params.K; // Default/fallback K
+        String phase = "Unknown";
+
         if (state instanceof SGGameState) {
             SGGameState sgState = (SGGameState) state;
             // *** YOU MIGHT NEED TO CHANGE 'getGameRound().getValue()' ***
             try {
-                // Replace if needed. Assumes method returns 1, 2, or 3.
                 currentMainRound = sgState.getRoundCounter();
             } catch (Exception e) {
                 currentMainRound = -1; // Fallback
             }
+            turnInRound = sgState.getRoundCounter(); // Turn is 0-based index
 
-            // Check if main round changed
+            // --- Select K based on turn ---
+            if (turnInRound <= 2) {         // Early Game (Turns 1-3)
+                kUsedForSearch = params.earlyGameK;
+                phase = "Early";
+            } else if (turnInRound <= 7) {  // Mid Game (Turns 4-8)
+                kUsedForSearch = params.midGameK;
+                phase = "Mid";
+            } else {                         // Late Game (Turn 9+)
+                kUsedForSearch = params.lateGameK;
+                phase = "Late";
+            }
+            // --- End K Selection ---
+
+            // Check if main round changed for the static turn counter
             if (currentMainRound != previousMainRound) {
                 turnCounterInRound = 0; // Reset turn counter for the new round
                 previousMainRound = currentMainRound; // Update the round tracker
@@ -117,7 +134,7 @@ public class GeminiMCTSTreeNode {
         }
         // Increment turn for this specific search call
         turnCounterInRound++;
-        int thisTurn = turnCounterInRound; // Capture the turn number for this specific log entry
+        int thisTurnLog = turnCounterInRound; // Capture the turn number for logging
         // --- End Counter Update ---
 
 
@@ -127,6 +144,7 @@ public class GeminiMCTSTreeNode {
         while (!stop) {
             ElapsedCpuTimer elapsedTimerIteration = new ElapsedCpuTimer();
             GeminiMCTSTreeNode selected = treePolicy();
+            // Note: treePolicy now uses the correct dynamic K via the ucb() method
             double delta = selected.rollOut();
             selected.backUp(delta);
             numIters++;
@@ -145,18 +163,21 @@ public class GeminiMCTSTreeNode {
             }
         }
 
-        // --- Simple Logging ---
+        // --- Updated Logging ---
         long elapsed = System.currentTimeMillis() - startTime;
         if (elapsed == 0) elapsed = 1;
 
-/*        System.out.println(String.format(
-                "Round %d / Turn %d: %d iterations in %dms (%.1f iter/ms)",
-                currentMainRound, // Use the detected main round
-                thisTurn,          // Use the captured turn number for this search
+        System.out.println(String.format(
+                // Added K value and Phase to the log message
+                "Round %d / Turn %d (%s): K=%.2f, %d iterations in %dms (%.1f iter/ms)",
+                currentMainRound,
+                thisTurnLog,
+                phase, // Display Early/Mid/Late
+                kUsedForSearch, // Display the K value used
                 numIters,
                 elapsed,
                 (double) numIters / elapsed
-        ));*/
+        ));
     }
 
 
@@ -247,11 +268,30 @@ public class GeminiMCTSTreeNode {
     }
 
     /**
-     * UCB selection. (Standard UCB, 3-player fixed)
+     * UCB selection.
+     * --- IMPLEMENTS DYNAMIC K BASED ON TURN ---
      */
     private AbstractAction ucb() {
         AbstractAction bestAction = null;
         double bestValue = -Double.MAX_VALUE;
+
+        // --- DYNAMIC K LOGIC ---
+        double currentK = params.K; // Default K as fallback
+        int turn = -1;
+        if (state instanceof SGGameState) {
+            turn = ((SGGameState) state).getRoundCounter(); // Turn is 0-based index
+
+            // Assign K based on turn number (within the round)
+            if (turn <= 2) {         // Early Game (Turns 1-3)
+                currentK = params.earlyGameK;
+            } else if (turn <= 7) {  // Mid Game (Turns 4-8)
+                currentK = params.midGameK;
+            } else {                 // Late Game (Turn 9+)
+                currentK = params.lateGameK;
+            }
+        }
+        // --- END DYNAMIC K LOGIC ---
+
 
         for (AbstractAction action : children.keySet()) {
             GeminiMCTSTreeNode child = children.get(action);
@@ -263,7 +303,11 @@ public class GeminiMCTSTreeNode {
             if (bestAction == null) bestAction = action; // Initialize
 
             double childValue = child.totValue / (child.nVisits + params.epsilon);
-            double explorationTerm = params.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
+
+            // --- Use currentK here ---
+            double explorationTerm = currentK * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
+            // --- End Use ---
+
             double uctValue = childValue + explorationTerm;
             uctValue = noise(uctValue, params.epsilon, rnd.nextDouble());
 
