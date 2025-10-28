@@ -1,4 +1,4 @@
-package players.GeminiMcts; // Ensure this matches your package
+package players.GeminiMcts;
 
 import core.AbstractGameState;
 import core.interfaces.IStateHeuristic;
@@ -8,31 +8,18 @@ import java.util.Arrays;
 
 public class GeminiMCTSParams extends PlayerParameters {
 
-    public double K = 1.5; // This might become less relevant, or used as a fallback
+    public double K = 1.5;
     public int rolloutLength = 8;
     public int maxTreeDepth = 100;
     public double epsilon = 1e-6;
     public IStateHeuristic heuristic = AbstractGameState::getHeuristicScore;
 
-    // --- NEW DYNAMIC K PARAMS ---
-    public double earlyGameK = 2.0;
-    public double midGameK = 0.7;
-    public double lateGameK = 1.2;
-    // --- END NEW PARAMS ---
-
     public GeminiMCTSParams() {
-        // Keep existing tunable parameters
-        addTunableParameter("K", 1.5); // Keep for reference or fallback
-        addTunableParameter("rolloutLength", 8);
-        addTunableParameter("maxTreeDepth", 100);
+        addTunableParameter("K", 1.5, Arrays.asList(0.0, 0.1, 1.0, Math.sqrt(2), 1.5, 3.0, 10.0));
+        addTunableParameter("rolloutLength", 8, Arrays.asList(0, 3, 8, 10, 30, 100));
+        addTunableParameter("maxTreeDepth", 100, Arrays.asList(1, 3, 10, 30, 100));
         addTunableParameter("epsilon", 1e-6);
         addTunableParameter("heuristic", (IStateHeuristic) AbstractGameState::getHeuristicScore);
-
-        // --- Make new K params tunable ---
-        addTunableParameter("earlyGameK", 2.0, Arrays.asList(1.0, 1.5, 2.0, 2.5));
-        addTunableParameter("midGameK", 0.7, Arrays.asList(0.1, 0.5, 0.7, 1.0, 1.5));
-        addTunableParameter("lateGameK", 1.2, Arrays.asList(0.7, 1.0, 1.2, 1.5, 2.0));
-        // --- END ---
     }
 
     @Override
@@ -43,17 +30,10 @@ public class GeminiMCTSParams extends PlayerParameters {
         maxTreeDepth = (int) getParameterValue("maxTreeDepth");
         epsilon = (double) getParameterValue("epsilon");
         heuristic = (IStateHeuristic) getParameterValue("heuristic");
-
-        // --- Reset new K params ---
-        earlyGameK = (double) getParameterValue("earlyGameK");
-        midGameK = (double) getParameterValue("midGameK");
-        lateGameK = (double) getParameterValue("lateGameK");
-        // --- END ---
     }
 
     @Override
     protected GeminiMCTSParams _copy() {
-        // TunableParameters copy should handle these new fields
         return new GeminiMCTSParams();
     }
 
