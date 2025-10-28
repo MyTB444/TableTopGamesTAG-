@@ -1,19 +1,11 @@
 {
-  "class": "players.improvedBasisMCTS.ImprovedBasicMCTSParams",
-  "K": 1.6,
-  "rolloutLength": 0,
-  "maxTreeDepth": 12,
-  "heuristic": {
-    "class": "games.sushigo.SGHeuristic"
+  "class" : "players.basicMCTS.BasicMCTSParams",
+  "K" : 1.6,
+  "rolloutLength" : 0,
+  "maxTreeDepth" : 12,
+  "heuristic" : {
+    "class" : "players.heuristics.ScoreHeuristic"
   },
-  "useRAVE": true,
-  "raveK": 500,
-  "useProgressiveWidening": true,
-  "progressiveWideningAlpha": 0.6,
-  "progressiveWideningC": 3,
-  "useUCB1Tuned": true,
-  "useValueTieBreaking": true,
-  "useActionOrdering": true,
-  "budgetType": "BUDGET_TIME",
-  "budget": 500
+  "budgetType" : "BUDGET_TIME",
+  "budget" : 250
 }

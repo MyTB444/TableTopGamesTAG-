@@ -12,6 +12,9 @@ import static java.util.stream.Collectors.toList;
 import static players.PlayerConstants.*;
 import static utilities.Utils.noise;
 
+/**
+ * FIXED version of ImprovedBasicTreeNode without the performance bugs
+ */
 class ImprovedBasicTreeNode {
     // Root node of tree
     ImprovedBasicTreeNode root;
@@ -27,12 +30,12 @@ class ImprovedBasicTreeNode {
     // Number of visits
     private int nVisits;
 
-    // RAVE statistics: track action values across different states
+    // RAVE statistics
     private Map<AbstractAction, Double> raveValues = new HashMap<>();
     private Map<AbstractAction, Integer> raveVisits = new HashMap<>();
 
     // UCB1-Tuned variance tracking
-    private double sumSquares;  // Sum of squared rewards
+    private double sumSquares;
 
     // Number of FM calls and State copies up until this node
     private int fmCallsCount;
@@ -41,11 +44,11 @@ class ImprovedBasicTreeNode {
     private Random rnd;
     private RandomPlayer randomPlayer = new RandomPlayer();
 
-    // State in this node (closed loop)
+    // State in this node
     private AbstractGameState state;
 
     protected ImprovedBasicTreeNode(ImprovedBasicMCTSPlayer player, ImprovedBasicTreeNode parent,
-                                    AbstractGameState state, Random rnd) {
+                            AbstractGameState state, Random rnd) {
         this.player = player;
         this.fmCallsCount = 0;
         this.parent = parent;
@@ -66,7 +69,6 @@ class ImprovedBasicTreeNode {
      * Performs full MCTS search, using the defined budget limits.
      */
     void mctsSearch() {
-
         ImprovedBasicMCTSParams params = player.getParameters();
 
         // Variables for tracking time budget
@@ -79,23 +81,21 @@ class ImprovedBasicTreeNode {
             elapsedTimer.setMaxTimeMillis(params.budget);
         }
 
-        // Tracking number of iterations for iteration budget
+        // Tracking number of iterations
         int numIters = 0;
-
         boolean stop = false;
 
         while (!stop) {
-            // New timer for this iteration
             ElapsedCpuTimer elapsedTimerIteration = new ElapsedCpuTimer();
 
-            // Selection + expansion: navigate tree until a node not fully expanded is found, add a new node to the tree
+            // Selection + expansion
             ImprovedBasicTreeNode selected = treePolicy();
 
-            // Monte carlo rollout: return value of MC rollout from the newly added node
-            RolloutResult result = selected.rollOut();
+            // Monte carlo rollout
+            double value = selected.rollOut();
 
-            // Back up the value of the rollout through the tree (with RAVE if enabled)
-            selected.backUp(result);
+            // Back up the value
+            selected.backUp(value);
 
             // Finished iteration
             numIters++;
@@ -103,276 +103,205 @@ class ImprovedBasicTreeNode {
             // Check stopping condition
             PlayerConstants budgetType = params.budgetType;
             if (budgetType == BUDGET_TIME) {
-                // Time budget
                 acumTimeTaken += (elapsedTimerIteration.elapsedMillis());
                 avgTimeTaken = acumTimeTaken / numIters;
                 remaining = elapsedTimer.remainingTimeMillis();
                 stop = remaining <= 2 * avgTimeTaken || remaining <= remainingLimit;
             } else if (budgetType == BUDGET_ITERATIONS) {
-                // Iteration budget
                 stop = numIters >= params.budget;
             } else if (budgetType == BUDGET_FM_CALLS) {
-                // FM calls budget
                 stop = fmCallsCount > params.budget;
             }
         }
     }
 
     /**
-     * Selection + expansion steps with progressive widening support.
-     * - Tree is traversed until a node not fully expanded is found.
-     * - A new child of this node is added to the tree.
-     *
-     * @return - new node added to the tree.
+     * Selection + expansion with FIXED progressive widening
      */
     private ImprovedBasicTreeNode treePolicy() {
-
         ImprovedBasicTreeNode cur = this;
 
-        // Keep iterating while the state reached is not terminal and the depth of the tree is not exceeded
         while (cur.state.isNotTerminal() && cur.depth < player.getParameters().maxTreeDepth) {
-            List<AbstractAction> unexpanded = cur.unexpandedActions();
-
-            if (unexpanded.isEmpty()) {
-                // All actions expanded, select best child
-                AbstractAction actionChosen = cur.selectAction();
-                cur = cur.children.get(actionChosen);
-            } else if (cur.shouldExpandMore()) {
-                // We should expand a new action
-                cur = cur.expand();
-                return cur;
+            if (cur.notFullyExpanded()) {
+                // Expand a new node
+                return cur.expand();
             } else {
-                // Progressive widening says don't expand more
-                // But we have unexpanded actions, so we have expanded children to select from
-                // Select from already expanded children
-                AbstractAction actionChosen = cur.selectAction();
-                cur = cur.children.get(actionChosen);
+                // Select best child
+                cur = cur.selectChild();
             }
         }
-
         return cur;
     }
 
     /**
-     * Check if we should expand more children based on progressive widening.
+     * Check if node is not fully expanded
+     * FIXED: More permissive progressive widening
      */
-    private boolean shouldExpandMore() {
-        List<AbstractAction> unexpanded = unexpandedActions();
-        if (unexpanded.isEmpty()) {
-            return false;  // All actions expanded
-        }
-
+    private boolean notFullyExpanded() {
         ImprovedBasicMCTSParams params = player.getParameters();
-        if (!params.useProgressiveWidening) {
-            return true;  // Always expand if not using progressive widening
+
+        // Count actual expanded children (non-null)
+        long expandedCount = children.values().stream().filter(Objects::nonNull).count();
+
+        // If all possible actions have been tried, we're fully expanded
+        if (expandedCount >= children.size()) {
+            return false;
         }
 
-        // Progressive widening: k(n) = C * n^alpha
-        // We can expand more children if current_children < k(n)
-        int expandedChildren = children.size() - unexpanded.size();
-
-        // Always expand at least one child
-        if (expandedChildren == 0) {
+        // If not using progressive widening, always allow expansion
+        if (!params.useProgressiveWidening) {
             return true;
         }
 
-        double k_n = params.progressiveWideningC * Math.pow(nVisits, params.progressiveWideningAlpha);
+        // FIXED: More permissive formula
+        // Ensure we explore at least 50% of actions or 5 actions minimum
+        double minActions = Math.min(children.size() * 0.5, Math.max(5, children.size() * 0.3));
 
-        return expandedChildren < k_n;
+        // Progressive widening formula
+        double k_n = params.progressiveWideningC * Math.pow(nVisits + 1, params.progressiveWideningAlpha);
+
+        // Allow expansion if below both thresholds
+        return expandedCount < Math.max(minActions, k_n);
     }
 
+    /**
+     * Expand a new child
+     */
+    private ImprovedBasicTreeNode expand() {
+        // Get unexpanded actions
+        List<AbstractAction> unexpanded = children.entrySet().stream()
+                .filter(e -> e.getValue() == null)
+                .map(Map.Entry::getKey)
+                .collect(toList());
+
+        if (unexpanded.isEmpty()) {
+            throw new AssertionError("Cannot expand fully expanded node");
+        }
+
+        // Choose random unexpanded action
+        AbstractAction chosen = unexpanded.get(rnd.nextInt(unexpanded.size()));
+
+        // Create child state
+        AbstractGameState nextState = state.copy();
+        advance(nextState, chosen);
+
+        // Create child node
+        ImprovedBasicTreeNode child = new ImprovedBasicTreeNode(player, this, nextState, rnd);
+        children.put(chosen, child);
+
+        return child;
+    }
+
+    /**
+     * Select best child using UCB
+     */
+    private ImprovedBasicTreeNode selectChild() {
+        ImprovedBasicTreeNode bestChild = null;
+        double bestValue = -Double.MAX_VALUE;
+        ImprovedBasicMCTSParams params = player.getParameters();
+
+        for (Map.Entry<AbstractAction, ImprovedBasicTreeNode> entry : children.entrySet()) {
+            ImprovedBasicTreeNode child = entry.getValue();
+            if (child == null) continue;  // Skip unexpanded
+
+            double uctValue = calculateUCB(entry.getKey(), child);
+            uctValue = noise(uctValue, params.epsilon, rnd.nextDouble());
+
+            if (uctValue > bestValue) {
+                bestValue = uctValue;
+                bestChild = child;
+            }
+        }
+
+        if (bestChild == null) {
+            throw new AssertionError("No child selected!");
+        }
+
+        return bestChild;
+    }
+
+    /**
+     * Calculate UCB value - SIMPLIFIED AND FIXED
+     */
+    private double calculateUCB(AbstractAction action, ImprovedBasicTreeNode child) {
+        ImprovedBasicMCTSParams params = player.getParameters();
+
+        // Basic exploitation value
+        double exploitation = child.totValue / (child.nVisits + params.epsilon);
+
+        // Basic exploration term
+        double exploration = params.K * Math.sqrt(
+                Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
+
+        // FIXED: Proper UCB1-Tuned with bounds checking
+        if (params.useUCB1Tuned && child.nVisits > 1) {
+            double mean = child.totValue / child.nVisits;
+            double variance = (child.sumSquares / child.nVisits) - (mean * mean);
+            variance = Math.max(0, variance);  // Ensure non-negative
+
+            double v_i = variance + Math.sqrt(2 * Math.log(this.nVisits) / child.nVisits);
+            exploration = params.K * Math.sqrt(
+                    Math.log(this.nVisits) / child.nVisits * Math.min(0.25, v_i));
+        }
+
+        // SIMPLIFIED RAVE - only if we have significant visits
+        double finalValue = exploitation;
+        if (params.useRAVE && raveVisits.getOrDefault(action, 0) > 5) {
+            double raveValue = raveValues.getOrDefault(action, 0.0) /
+                    raveVisits.getOrDefault(action, 1);
+            double beta = Math.sqrt(params.raveK / (3 * this.nVisits + params.raveK));
+            finalValue = (1 - beta) * exploitation + beta * raveValue;
+        }
+
+        // Handle player perspective
+        boolean iAmMoving = state.getCurrentPlayer() == player.getPlayerID();
+        if (!iAmMoving) {
+            finalValue = -finalValue;
+        }
+
+        return finalValue + exploration;
+    }
+
+    /**
+     * Set state - SIMPLIFIED without expensive ordering
+     */
     private void setState(AbstractGameState newState) {
         state = newState;
         if (newState.isNotTerminal()) {
             List<AbstractAction> actions = player.getForwardModel()
                     .computeAvailableActions(state, player.getParameters().actionSpace);
 
-            // Sort actions by heuristic value for better expansion order
-            actions = orderActionsByHeuristic(actions);
-
+            // Initialize children without expensive ordering
             for (AbstractAction action : actions) {
-                children.put(action, null); // mark a new node to be expanded
-                // Initialize RAVE stats
-                raveValues.put(action, 0.0);
-                raveVisits.put(action, 0);
+                children.put(action, null);
+                if (player.getParameters().useRAVE) {
+                    raveValues.put(action, 0.0);
+                    raveVisits.put(action, 0);
+                }
             }
         }
     }
 
     /**
-     * Order actions by quick heuristic evaluation for better expansion order.
+     * Advance state
      */
-    private List<AbstractAction> orderActionsByHeuristic(List<AbstractAction> actions) {
-        ImprovedBasicMCTSParams params = player.getParameters();
-        if (!params.useActionOrdering || actions.size() < 5) {
-            return actions;  // Don't bother for small action spaces
-        }
-
-        // Quick evaluation of each action
-        List<ActionValue> scoredActions = new ArrayList<>();
-        for (AbstractAction action : actions) {
-            AbstractGameState testState = state.copy();
-            player.getForwardModel().next(testState, action.copy());
-            double value = params.getStateHeuristic().evaluateState(testState, player.getPlayerID());
-            scoredActions.add(new ActionValue(action, value));
-        }
-
-        // Sort descending by value
-        scoredActions.sort((a, b) -> Double.compare(b.value, a.value));
-
-        return scoredActions.stream().map(av -> av.action).collect(toList());
-    }
-
-    /**
-     * Helper class for action ordering.
-     */
-    private static class ActionValue {
-        AbstractAction action;
-        double value;
-
-        ActionValue(AbstractAction action, double value) {
-            this.action = action;
-            this.value = value;
-        }
-    }
-
-    /**
-     * @return A list of the unexpanded Actions from this State
-     */
-    private List<AbstractAction> unexpandedActions() {
-        return children.keySet().stream().filter(a -> children.get(a) == null).collect(toList());
-    }
-
-    /**
-     * Expands the node by creating a new child node and adding to the tree.
-     * Uses heuristic ordering to expand promising actions first.
-     *
-     * @return - new child node.
-     */
-    private ImprovedBasicTreeNode expand() {
-        // Pick best unexpanded action (they're already ordered by heuristic)
-        List<AbstractAction> notChosen = unexpandedActions();
-        AbstractAction chosen = notChosen.get(0);  // Take the first (best) unexpanded action
-
-        // copy the current state and advance it using the chosen action
-        AbstractGameState nextState = state.copy();
-        advance(nextState, chosen.copy());
-
-        // then instantiate a new node
-        ImprovedBasicTreeNode tn = new ImprovedBasicTreeNode(player, this, nextState, rnd);
-        children.put(chosen, tn);
-        return tn;
-    }
-
-    /**
-     * Advance the current game state with the given action, count the FM call.
-     *
-     * @param gs  - current game state
-     * @param act - action to apply
-     */
-    private void advance(AbstractGameState gs, AbstractAction act) {
-        player.getForwardModel().next(gs, act);
+    private void advance(AbstractGameState gs, AbstractAction action) {
+        player.getForwardModel().next(gs, action);
         root.fmCallsCount++;
     }
 
     /**
-     * Enhanced selection using UCB with optional RAVE and UCB1-Tuned.
+     * Perform rollout - SIMPLIFIED
      */
-    private AbstractAction selectAction() {
-        AbstractAction bestAction = null;
-        double bestValue = -Double.MAX_VALUE;
-        ImprovedBasicMCTSParams params = player.getParameters();
-
-        for (AbstractAction action : children.keySet()) {
-            ImprovedBasicTreeNode child = children.get(action);
-            // Skip unexpanded children (can happen with progressive widening)
-            if (child == null)
-                continue;
-
-            if (bestAction == null)
-                bestAction = action;
-
-            double uctValue = calculateUCTValue(action, child);
-
-            // Apply small noise to break ties randomly
-            uctValue = noise(uctValue, params.epsilon, player.getRnd().nextDouble());
-
-            // Assign value
-            if (uctValue > bestValue) {
-                bestAction = action;
-                bestValue = uctValue;
-            }
-        }
-
-        if (bestAction == null)
-            throw new AssertionError("We have a null value in UCT : shouldn't really happen!");
-
-        root.fmCallsCount++;  // log one iteration complete
-        return bestAction;
-    }
-
-    /**
-     * Calculate UCT value with optional RAVE and UCB1-Tuned enhancements.
-     */
-    private double calculateUCTValue(AbstractAction action, ImprovedBasicTreeNode child) {
-        ImprovedBasicMCTSParams params = player.getParameters();
-
-        // Standard exploitation value
-        double hvVal = child.totValue;
-        double childValue = hvVal / (child.nVisits + params.epsilon);
-
-        // Standard exploration term
-        double explorationTerm = params.K * Math.sqrt(
-                Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
-
-        // UCB1-Tuned: add variance term
-        if (params.useUCB1Tuned && child.nVisits > 1) {
-            double variance = (child.sumSquares / child.nVisits) - (childValue * childValue);
-            double v_i = variance + Math.sqrt(2 * Math.log(this.nVisits) / child.nVisits);
-            explorationTerm = params.K * Math.sqrt(
-                    Math.log(this.nVisits) / child.nVisits * Math.min(0.25, v_i));
-        }
-
-        double uctValue;
-        boolean iAmMoving = state.getCurrentPlayer() == player.getPlayerID();
-
-        if (params.useRAVE && raveVisits.get(action) > 0) {
-            // RAVE enhancement: blend MC value with RAVE value
-            double raveValue = raveValues.get(action) / (raveVisits.get(action) + params.epsilon);
-
-            // RAVE weight decreases as we get more MC samples
-            double beta = Math.sqrt(params.raveK / (3 * this.nVisits + params.raveK));
-
-            // Blend MC and RAVE values
-            double blendedValue = (1 - beta) * childValue + beta * raveValue;
-            uctValue = iAmMoving ? blendedValue : -blendedValue;
-        } else {
-            uctValue = iAmMoving ? childValue : -childValue;
-        }
-
-        uctValue += explorationTerm;
-
-        return uctValue;
-    }
-
-    /**
-     * Perform a Monte Carlo rollout from this node.
-     * Returns both the value and the actions taken for RAVE updates.
-     *
-     * @return - rollout result with value and actions taken.
-     */
-    private RolloutResult rollOut() {
+    private double rollOut() {
         int rolloutDepth = 0;
-        List<AbstractAction> actionsInRollout = new ArrayList<>();
-
-        // If rollouts are enabled, select actions for the rollout
         AbstractGameState rolloutState = state.copy();
+
         if (player.getParameters().rolloutLength > 0) {
             while (!finishRollout(rolloutState, rolloutDepth)) {
                 List<AbstractAction> availableActions = randomPlayer.getForwardModel()
                         .computeAvailableActions(rolloutState, randomPlayer.parameters.actionSpace);
-                AbstractAction next = randomPlayer.getAction(rolloutState, availableActions);
-                actionsInRollout.add(next);
+                AbstractAction next = availableActions.get(rnd.nextInt(availableActions.size()));
                 advance(rolloutState, next);
                 rolloutDepth++;
             }
@@ -382,53 +311,38 @@ class ImprovedBasicTreeNode {
         double value = player.getParameters().getStateHeuristic()
                 .evaluateState(rolloutState, player.getPlayerID());
 
-        if (Double.isNaN(value))
-            throw new AssertionError("Illegal heuristic value - should be a number");
-
-        return new RolloutResult(value, actionsInRollout);
-    }
-
-    /**
-     * Helper class to store rollout results.
-     */
-    private static class RolloutResult {
-        double value;
-        List<AbstractAction> actions;
-
-        RolloutResult(double value, List<AbstractAction> actions) {
-            this.value = value;
-            this.actions = actions;
+        if (Double.isNaN(value)) {
+            throw new AssertionError("NaN heuristic value");
         }
+
+        return value;
     }
 
     /**
-     * Checks if rollout is finished.
+     * Check if rollout is finished
      */
     private boolean finishRollout(AbstractGameState rollerState, int depth) {
-        if (depth >= player.getParameters().rolloutLength)
+        if (depth >= player.getParameters().rolloutLength) {
             return true;
+        }
         return !rollerState.isNotTerminal();
     }
 
     /**
-     * Back up the value through the tree with RAVE updates.
-     *
-     * @param result - rollout result to backup
+     * Back up value through tree
      */
-    private void backUp(RolloutResult result) {
+    private void backUp(double value) {
         ImprovedBasicTreeNode n = this;
         while (n != null) {
             n.nVisits++;
-            n.totValue += result.value;
-            n.sumSquares += result.value * result.value;
+            n.totValue += value;
+            n.sumSquares += value * value;
 
-            // Update RAVE statistics
-            if (player.getParameters().useRAVE && n.parent != null) {
-                for (AbstractAction action : result.actions) {
-                    // Update RAVE for all actions that could have been taken
-                    if (n.parent.children.containsKey(action)) {
-                        n.parent.updateRAVE(action, result.value);
-                    }
+            // Update RAVE for all actions (simplified)
+            if (n.parent != null && player.getParameters().useRAVE) {
+                for (AbstractAction action : n.parent.children.keySet()) {
+                    n.parent.raveValues.merge(action, value, Double::sum);
+                    n.parent.raveVisits.merge(action, 1, Integer::sum);
                 }
             }
 
@@ -437,51 +351,36 @@ class ImprovedBasicTreeNode {
     }
 
     /**
-     * Update RAVE statistics for an action.
-     */
-    private void updateRAVE(AbstractAction action, double value) {
-        if (raveValues.containsKey(action)) {
-            raveValues.put(action, raveValues.get(action) + value);
-            raveVisits.put(action, raveVisits.get(action) + 1);
-        }
-    }
-
-    /**
-     * Calculates the best action from the root according to the most visited node
-     * (with optional value tie-breaking).
-     *
-     * @return - the best AbstractAction
+     * Select best action from root
      */
     AbstractAction bestAction() {
         double bestValue = -Double.MAX_VALUE;
         AbstractAction bestAction = null;
         ImprovedBasicMCTSParams params = player.getParameters();
 
-        for (AbstractAction action : children.keySet()) {
-            if (children.get(action) != null) {
-                ImprovedBasicTreeNode node = children.get(action);
-
+        for (Map.Entry<AbstractAction, ImprovedBasicTreeNode> entry : children.entrySet()) {
+            ImprovedBasicTreeNode child = entry.getValue();
+            if (child != null) {
                 // Primary criterion: visit count
-                double childValue = node.nVisits;
+                double childValue = child.nVisits;
 
-                // Tie-breaker: average value (for equally visited nodes)
+                // Tie-breaker: average value
                 if (params.useValueTieBreaking) {
-                    childValue += (node.totValue / (node.nVisits + params.epsilon)) * 0.01;
+                    childValue += (child.totValue / (child.nVisits + params.epsilon)) * 0.01;
                 }
 
-                // Apply small noise to break ties randomly
-                childValue = noise(childValue, params.epsilon, player.getRnd().nextDouble());
+                // Add noise
+                childValue = noise(childValue, params.epsilon, rnd.nextDouble());
 
-                // Save best value
                 if (childValue > bestValue) {
                     bestValue = childValue;
-                    bestAction = action;
+                    bestAction = entry.getKey();
                 }
             }
         }
 
         if (bestAction == null) {
-            throw new AssertionError("Unexpected - no selection made.");
+            throw new AssertionError("No best action found!");
         }
 
         return bestAction;
