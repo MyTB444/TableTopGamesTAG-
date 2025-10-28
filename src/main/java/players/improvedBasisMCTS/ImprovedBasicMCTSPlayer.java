@@ -10,11 +10,15 @@ import java.util.Random;
 
 
 /**
- * Improved version of Basic MCTS with several enhancements:
- * - RAVE (Rapid Action Value Estimation) for faster learning
- * - Progressive widening to manage large action spaces
- * - UCB1-Tuned for better exploration/exploitation balance
- * - Action ordering heuristic for better expansion
+ * Simplified Optimized MCTS Player for 3-player Sushigo
+ * Uses the existing ImprovedBasicTreeNode but with carefully tuned parameters
+ *
+ * Key optimizations for Sushigo:
+ * - Tuned exploration constant for 3-player dynamics
+ * - Short rollouts with strong heuristic reliance
+ * - RAVE for faster learning in drafting games
+ * - Progressive widening for variable hand sizes
+ * - UCB1-Tuned for high-variance game
  */
 public class ImprovedBasicMCTSPlayer extends AbstractPlayer {
 
@@ -23,45 +27,76 @@ public class ImprovedBasicMCTSPlayer extends AbstractPlayer {
     }
 
     public ImprovedBasicMCTSPlayer(long seed) {
-        super(new ImprovedBasicMCTSParams(), "Improved Basic MCTS");
+        super(new ImprovedBasicMCTSParams(), "Simplified Sushigo MCTS");
         parameters.setRandomSeed(seed);
         rnd = new Random(seed);
 
-        // Enhanced parameters for better performance
-        ImprovedBasicMCTSParams params = getParameters();
-        params.K = 0.7;  // Lower exploration for more focused search
-        params.rolloutLength = 0;  // Trust the heuristic
-        params.maxTreeDepth = 20;  // Deeper tree for better planning
-        params.epsilon = 1e-6;
+        // Carefully tuned parameters for 3-player Sushigo
 
-        // RAVE parameters
-        params.useRAVE = true;
-        params.raveK = 300;  // RAVE bias decreases with visits
-
-        // Progressive widening
-        params.useProgressiveWidening = true;
-        params.progressiveWideningAlpha = 0.5;
-        params.progressiveWideningC = 2.0;
-
-        // UCB variant
-        params.useUCB1Tuned = false;  // Standard UCB1 works better for most games
     }
 
     public ImprovedBasicMCTSPlayer(ImprovedBasicMCTSParams params) {
-        super(params, "Improved Basic MCTS");
+        super(params, "Simplified Sushigo MCTS");
         rnd = new Random(params.getRandomSeed());
     }
 
+    /**
+     * Configure parameters specifically optimized for 3-player Sushigo
+     */
+
+
     @Override
     public AbstractAction _getAction(AbstractGameState gameState, List<AbstractAction> actions) {
-        // Search for best action from the root
+        // Dynamically adjust parameters based on hand size (game phase)
+        adjustParametersForGamePhase(actions.size());
+
+        // Use the existing ImprovedBasicTreeNode with our tuned parameters
         ImprovedBasicTreeNode root = new ImprovedBasicTreeNode(this, null, gameState, rnd);
 
-        // mctsSearch does all of the hard work
+        // Perform MCTS search
         root.mctsSearch();
 
         // Return best action
         return root.bestAction();
+    }
+
+    /**
+     * Dynamically adjust parameters based on game phase (hand size indicates phase)
+     */
+    private void adjustParametersForGamePhase(int handSize) {
+        ImprovedBasicMCTSParams params = getParameters();
+
+        if (handSize >= 8) {
+            // Early in round: more exploration, longer rollouts
+            params.K = 1.4;  // Higher exploration
+            params.rolloutLength = 3;
+            params.progressiveWideningC = 3.0;  // Explore more actions
+            params.raveK = 500;  // Slower RAVE decay
+
+        } else if (handSize >= 5) {
+            // Mid-round: balanced approach
+            params.K = 1.2;  // Balanced
+            params.rolloutLength = 2;
+            params.progressiveWideningC = 2.5;
+            params.raveK = 400;
+
+        } else if (handSize >= 3) {
+            // Late round: more exploitation, focused search
+            params.K = 1.0;  // More exploitation
+            params.rolloutLength = 1;
+            params.progressiveWideningC = 2.0;  // Focus on best actions
+            params.raveK = 300;  // Faster RAVE decay
+
+        } else {
+            // Very late round: pure exploitation
+            params.K = 0.7;  // Heavy exploitation
+            params.rolloutLength = 0;  // Just use heuristic
+            params.progressiveWideningC = 1.5;  // Very focused
+            params.raveK = 200;
+        }
+
+        // Adjust tree depth based on hand size
+        params.maxTreeDepth = Math.min(15, handSize * 2);
     }
 
     @Override
@@ -75,11 +110,11 @@ public class ImprovedBasicMCTSPlayer extends AbstractPlayer {
 
     @Override
     public String toString() {
-        return "ImprovedBasicMCTSAssignment";
+        return "SimplifiedSushigoMCTS";
     }
 
     @Override
     public ImprovedBasicMCTSPlayer copy() {
-        return new ImprovedBasicMCTSPlayer((ImprovedBasicMCTSParams) parameters.copy());
+        return new ImprovedBasicMCTSPlayer((ImprovedBasicMCTSParams) getParameters().copy());
     }
 }

@@ -1,11 +1,11 @@
 {
-	"class" : "players.basicMCTS.BasicMCTSParams",
-	"K" : 1.0,
-	"rolloutLength" : 0,
-	"maxTreeDepth" : 30,
-	"heuristic" : {
- 		"class" : "games.sushigo.SGHeuristic"
-	},
-	"budgetType" : "BUDGET_TIME",
-	"budget" : 1000
+  "class" : "players.basicMCTSAssignment.BasicMCTSParams",
+  "K" : 1.6,
+  "rolloutLength" : 0,
+  "maxTreeDepth" : 12,
+  "heuristic" : {
+    "class" : "games.sushigo.SGHeuristic"
+  },
+  "budgetType" : "BUDGET_TIME",
+  "budget" : 500
 }
