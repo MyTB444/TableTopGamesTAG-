@@ -34,20 +34,17 @@ public class GeminiMCTSTreeNode {
     protected int fmCallsCount = 0;
     protected int depth;
 
-    // --- Gemini Logic Fields ---
-    protected AbstractAction cachedOpponentPrediction = null; // Caches prediction at shallow depths
-    protected int nChildrenExpanded = 0; // For Progressive Widening
-
-    // --- Tunable Parameters (from Prompt 5) ---
-    private static final double WIDTH_PARAMETER_EARLY = 12.0; // Rounds 1-5
-    private static final double WIDTH_PARAMETER_MID = 6.0;    // Rounds 6-11 (tight!)
-    private static final double WIDTH_PARAMETER_LATE = 15.0;  // Rounds 12-14
-    private static final int MAX_PREDICTION_DEPTH = 2;         // Only predict at depth 0, 1, 2
+    // --- Tunable Parameters (NEW - for Dynamic K) ---
+    private static final double K_EARLY = 1.8; // Early in a round (large hand)
+    private static final double K_MID = 1.2;   // Mid-round
+    private static final double K_LATE = 0.8;  // Late in a round (small hand)
+    private static final double INSURMOUNTABLE_LEAD = 20.0;
+    private static final double EPSILON_GREEDY = 0.20; // 20% random
 
 
     /**
      * --- CONSTRUCTOR ---
-     * Implements Depth-Limited Prediction Caching (Prompt 3 & 4)
+     * Implements Requirement 3: Simple Action Pruning
      */
     public GeminiMCTSTreeNode(GeminiMCTSPlayer player, GeminiMCTSTreeNode parent, AbstractGameState gameState, Random rnd) {
         this.player = player;
@@ -57,35 +54,16 @@ public class GeminiMCTSTreeNode {
         this.rnd = rnd;
         this.params = player.getParameters();
         this.fmCallsCount = 0;
-        this.cachedOpponentPrediction = null;
-        this.nChildrenExpanded = 0;
 
-        // --- PROMPT 3: Track depth ---
         this.depth = parent == null ? 0 : parent.depth + 1;
 
         if (gameState.isNotTerminal()) {
+            // --- REQ 3: ACTION PRUNING ---
             List<AbstractAction> availableActions = player.getForwardModel().computeAvailableActions(state, player.getParameters().actionSpace);
-            int rootPlayer = player.getPlayerID();
-            int currentPlayer = gameState.getCurrentPlayer();
+            List<AbstractAction> prunedActions = pruneActions(availableActions, state);
+            // --- END PRUNING ---
 
-            // --- PROMPT 3 & 5: CRITICAL DEPTH CHECK ---
-            // Only cache predictions at shallow depths to prevent tree explosion
-            if (currentPlayer != rootPlayer &&
-                    this.depth <= MAX_PREDICTION_DEPTH && // KEY CHANGE
-                    gameState instanceof SGGameState) {
-
-                SGGameState sgState = (SGGameState) gameState;
-                if (sgState.isHandKnown(rootPlayer, currentPlayer) && !availableActions.isEmpty()) {
-
-                    // --- PROMPT 4: Debugging ---
-                    // System.out.println("Predicting at depth " + this.depth);
-
-                    this.cachedOpponentPrediction = this.predictOpponentAction(sgState, availableActions, currentPlayer);
-                }
-            }
-            // --- END DEPTH CHECK ---
-
-            for (AbstractAction action : availableActions) {
+            for (AbstractAction action : prunedActions) {
                 children.put(action, null);
             }
         }
@@ -93,11 +71,9 @@ public class GeminiMCTSTreeNode {
 
     /**
      * --- mctsSearch ---
-     * Implements Performance Monitoring (Prompt 4)
+     * (Restored getRoundCounter logging)
      */
     public void mctsSearch() {
-
-        // --- 1. Original Budget Declarations (FIXED) ---
         double avgTimeTaken = 0;
         double acumTimeTaken = 0;
         long remaining = 0;
@@ -107,30 +83,25 @@ public class GeminiMCTSTreeNode {
             elapsedTimer.setMaxTimeMillis(params.budget);
         }
 
-        // --- 2. New Performance Monitoring (PROMPT 4) ---
         long startTime = System.currentTimeMillis();
         int currentRound = -1;
         if (state instanceof SGGameState) {
+            // --- RESTORED ---
             currentRound = ((SGGameState) state).getRoundCounter();
         }
 
-        // --- 3. Main Loop ---
         int numIters = 0;
         boolean stop = false;
 
         while (!stop) {
             ElapsedCpuTimer elapsedTimerIteration = new ElapsedCpuTimer();
 
-            // 1. Selection + Expansion
             GeminiMCTSTreeNode selected = treePolicy();
-            // 2. Simulation (Rollout)
             double delta = selected.rollOut();
-            // 3. Backpropagation
             selected.backUp(delta);
 
             numIters++;
 
-            // --- 4. Stopping Condition (FIXED) ---
             PlayerConstants budgetType = params.budgetType;
             if (budgetType == BUDGET_TIME) {
                 acumTimeTaken += (elapsedTimerIteration.elapsedMillis());
@@ -144,107 +115,48 @@ public class GeminiMCTSTreeNode {
             }
         }
 
-        // --- 5. New Enhanced Logging (PROMPT 4) ---
         long elapsed = System.currentTimeMillis() - startTime;
-        if (elapsed == 0) elapsed = 1; // Avoid divide by zero
+        if (elapsed == 0) elapsed = 1;
+
+        // --- RESTORED ---
+        /* // Uncomment for performance profiling
         System.out.println(String.format(
                 "Round %d: %d iterations in %dms (%.1f iter/ms)",
                 currentRound, numIters, elapsed, (double)numIters/elapsed
         ));
+        */
     }
 
     /**
      * --- treePolicy ---
-     * Implements Fallback for Deep Nodes (Prompt 3)
+     * (Standard UCT logic, as fixed previously)
      */
     private GeminiMCTSTreeNode treePolicy() {
         GeminiMCTSTreeNode cur = this;
 
         while (cur.state.isNotTerminal() && cur.depth < params.maxTreeDepth) {
+            List<AbstractAction> unexpanded = cur.unexpandedActions();
 
-            // --- 1. CACHE-READING LOGIC (Shallow Depths) ---
-            if (cur.cachedOpponentPrediction != null) {
-                AbstractAction predictedAction = cur.cachedOpponentPrediction;
-                if (!cur.children.containsKey(predictedAction)) {
-                    // Failsafe
-                    return standardMCTSStep(cur);
-                }
-                if (cur.children.get(predictedAction) == null) {
-                    return cur.expandSpecificAction(predictedAction);
-                } else {
-                    cur = cur.children.get(predictedAction);
-                    continue;
-                }
-
-                // --- 2. PROMPT 3: FALLBACK (Deep Known Opponent) ---
-                // This is critical to prevent tree explosion at deep levels
-            } else if (cur.depth > MAX_PREDICTION_DEPTH && isOpponentWithKnownHand(cur.state)) {
-
-                // Deep node with known hand but no cache - use random sampling
-                List<AbstractAction> actions = new ArrayList<>(cur.children.keySet()); // Use cached actions
-                if (!actions.isEmpty()) {
-                    AbstractAction randomAction = actions.get(rnd.nextInt(actions.size()));
-                    if (cur.children.get(randomAction) == null) {
-                        return cur.expandSpecificAction(randomAction);
-                    } else {
-                        cur = cur.children.get(randomAction);
-                        continue;
-                    }
-                }
+            if (!unexpanded.isEmpty()) {
+                // --- 1. EXPAND ---
+                return cur.expand(unexpanded);
+            } else {
+                // --- 2. SELECT ---
+                AbstractAction actionChosen = cur.ucb();
+                if (actionChosen == null) return cur; // Terminal node
+                cur = cur.children.get(actionChosen);
             }
-            // --- END FALLBACK ---
-
-            // --- 3. Standard MCTS with progressive widening ---
-            return standardMCTSStep(cur);
         }
         return cur;
     }
 
     /**
-     * --- standardMCTSStep ---
-     * Implements Adaptive Width (Prompt 2 & 5)
-     */
-    private GeminiMCTSTreeNode standardMCTSStep(GeminiMCTSTreeNode cur) {
-        List<AbstractAction> unexpanded = cur.unexpandedActions();
-
-        // --- PROMPT 2 & 5: Use adaptive width ---
-        int maxChildren = cur.getMaxChildren();
-
-        if (!unexpanded.isEmpty() && cur.nChildrenExpanded < maxChildren) {
-            // --- PROMPT 1: expand() now expands the best actions first ---
-            return cur.expand(unexpanded);
-        } else {
-            AbstractAction actionChosen = cur.ucb();
-            if (actionChosen == null) return cur; // All expanded children are terminal
-            return cur.children.get(actionChosen);
-        }
-    }
-
-    /**
      * --- expand ---
-     * Implements Ordered Expansion (Prompt 1)
+     * (Standard random-choice expansion)
      */
     private GeminiMCTSTreeNode expand(List<AbstractAction> notChosen) {
-
-        // --- PROMPT 1: Order unexpanded actions by predicted value ---
-        int currentPlayer = state.getCurrentPlayer();
-
-        if (currentPlayer != player.getPlayerID() && state instanceof SGGameState) {
-            // For opponents: use evaluateActionQuick logic to order
-            notChosen.sort((a, b) -> {
-                double valueA = evaluateActionQuick((SGGameState)state, a, currentPlayer);
-                double valueB = evaluateActionQuick((SGGameState)state, b, currentPlayer);
-                return Double.compare(valueB, valueA); // Descending (best first)
-            });
-        } else {
-            // For self: keep it random (or could use heuristic)
-            Collections.shuffle(notChosen, rnd);
-        }
-
-        // Take first (best or random) unexpanded action
+        Collections.shuffle(notChosen, rnd);
         AbstractAction chosen = notChosen.get(0);
-
-        this.nChildrenExpanded++;
         return expandSpecificAction(chosen);
     }
 
@@ -276,18 +188,32 @@ public class GeminiMCTSTreeNode {
 
     /**
      * --- ucb ---
-     * (Unchanged - still only checks non-null children)
+     * Implements Requirement 4: Dynamic UCB Exploration (K)
      */
     private AbstractAction ucb() {
         AbstractAction bestAction = null;
         double bestValue = -Double.MAX_VALUE;
 
+        // --- REQ 4: Get K based on the *root node's* current state ---
+        double dynamicK = root.getDynamicK();
+
+        // --- DEBUG LOG (FIXED) ---
+        // Uncomment this line to check if K is changing
+        // if (root.state instanceof SGGameState) {
+        //     System.out.println("Hand: " + ((SGGameState)root.state).getPlayerHands().get(root.state.getCurrentPlayer()).getComponents().size() + ", Using dynamic K: " + dynamicK);
+        // }
+        // --- END DEBUG LOG ---
+
+
         for (AbstractAction action : children.keySet()) {
             GeminiMCTSTreeNode child = children.get(action);
-            if (child == null) continue; // PW: Only check expanded
+            if (child == null) continue;
 
             double childValue = child.totValue / (child.nVisits + params.epsilon);
-            double explorationTerm = params.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
+
+            // Use the dynamic K value for exploration
+            double explorationTerm = dynamicK * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + params.epsilon));
+
             double uctValue = childValue + explorationTerm;
             uctValue = noise(uctValue, params.epsilon, rnd.nextDouble());
 
@@ -296,25 +222,38 @@ public class GeminiMCTSTreeNode {
                 bestValue = uctValue;
             }
         }
-        if (bestAction == null) return null; // No expanded children
+        if (bestAction == null) return null;
         root.fmCallsCount++;
         return bestAction;
     }
 
     /**
      * --- rollOut ---
-     * (Unchanged - still 100% fast and random)
+     * Implements Requirement 1: Smart Rollout Policy
+     * Implements Requirement 2: Early Rollout Termination
      */
     private double rollOut() {
         int rolloutDepth = 0;
         AbstractGameState rolloutState = this.state.copy();
+
         while (!finishRollout(rolloutState, rolloutDepth)) {
+
+            // --- REQ 2: EARLY TERMINATION ---
+            if (isInsurmountableLead(rolloutState)) {
+                break;
+            }
+
             List<AbstractAction> availableActions = player.getForwardModel().computeAvailableActions(rolloutState, player.getParameters().actionSpace);
             if (availableActions.isEmpty()) break;
-            AbstractAction chosenAction = availableActions.get(rnd.nextInt(availableActions.size()));
+
+            // --- REQ 1: SMART ROLLOUT (EPSILON-GREEDY) ---
+            AbstractAction chosenAction = getSmartAction(rolloutState, availableActions);
+            // --- END SMART ROLLOUT ---
+
             advance(rolloutState, chosenAction);
             rolloutDepth++;
         }
+
         IStateHeuristic heuristic = params.getStateHeuristic();
         double value = heuristic.evaluateState(rolloutState, player.getPlayerID());
         if (Double.isNaN(value))
@@ -322,12 +261,41 @@ public class GeminiMCTSTreeNode {
         return value;
     }
 
-    // --- NEW/MODIFIED HELPER METHODS ---
+    // --- NEW HELPER METHODS (FOR REQUIREMENTS) ---
 
     /**
-     * --- New Helper: evaluateActionQuick (Prompt 1) ---
+     * --- New Helper (Req 1): getSmartAction ---
+     * Implements an Epsilon-Greedy policy using a fast, lightweight heuristic.
+     */
+    private AbstractAction getSmartAction(AbstractGameState rolloutState, List<AbstractAction> availableActions) {
+        // 20% of the time, or if not in SushiGo, pick randomly
+        if (rnd.nextDouble() < EPSILON_GREEDY || !(rolloutState instanceof SGGameState)) {
+            return availableActions.get(rnd.nextInt(availableActions.size()));
+        }
+
+        // 80% of the time: pick the "best" action using the fast heuristic
+        SGGameState sgState = (SGGameState) rolloutState;
+        int currentPlayer = sgState.getCurrentPlayer();
+
+        AbstractAction bestAction = null;
+        double bestValue = Double.NEGATIVE_INFINITY;
+
+        for (AbstractAction action : availableActions) {
+            // Use the fast, state-copy-free evaluator
+            double value = evaluateActionQuick(sgState, action, currentPlayer);
+            if (value > bestValue) {
+                bestValue = value;
+                bestAction = action;
+            }
+        }
+
+        return (bestAction != null) ? bestAction : availableActions.get(rnd.nextInt(availableActions.size())); // Failsafe
+    }
+
+    /**
+     * --- New Helper (Req 1): evaluateActionQuick ---
      * Lightweight "selfish" card evaluation, returns a double.
-     * This is the logic used by predictOpponentAction.
+     * This is fast and does not require state copies or FM calls.
      */
     private double evaluateActionQuick(SGGameState state, AbstractAction action, int playerToEvaluate) {
         if (!(action instanceof games.sushigo.actions.ChooseCard)) return 0.0;
@@ -343,71 +311,123 @@ public class GeminiMCTSTreeNode {
             case SquidNigiri:   return hasWasabi ? 9.0 : 3.0;
             case SalmonNigiri:  return hasWasabi ? 6.0 : 2.0;
             case EggNigiri:     return hasWasabi ? 3.0 : 1.0;
-            case Maki:          return card.count * 1.5;
-            case Pudding:       return 1.0;
-            case Tempura:       return (tempuraCount % 2 == 1) ? 5.0 : 2.5;
-            case Sashimi:       return (sashimiCount % 3 == 2) ? 10.0 : 3.0;
-            case Dumpling:      return 1.5;
-            case Wasabi:        return -0.1;
+            case Maki:          return card.count * 1.5; // Maki is always decent
+            case Pudding:       return 1.0; // Pudding is a small long-term investment
+            case Tempura:       return (tempuraCount % 2 == 1) ? 5.0 : 2.5; // High value for 2nd, medium for 1st
+            case Sashimi:       return (sashimiCount % 3 == 2) ? 10.0 : 3.0; // High value for 3rd, medium for 1st/2nd
+            case Dumpling:      return 1.5; // Always okay
+            case Wasabi:        return -0.1; // Small negative to avoid taking it raw
             case Chopsticks:    return 0.5;
             default:            return 0.5;
         }
     }
 
     /**
-     * --- predictOpponentAction ---
-     * (Now just finds the max from the quick evaluator)
+     * --- New Helper (Req 2): isInsurmountableLead ---
+     * Checks if any player is winning or losing by a large margin.
      */
-    private AbstractAction predictOpponentAction(SGGameState state, List<AbstractAction> actions, int opponentID) {
-        AbstractAction bestAction = null;
-        double bestValue = Double.NEGATIVE_INFINITY;
+    private boolean isInsurmountableLead(AbstractGameState state) {
+        if (!(state instanceof SGGameState)) return false;
 
-        for (AbstractAction action : actions) {
-            double value = evaluateActionQuick(state, action, opponentID);
-            if (value > bestValue) {
-                bestValue = value;
-                bestAction = action;
+        double minScore = Double.MAX_VALUE;
+        double maxScore = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < state.getNPlayers(); i++) {
+            double score = state.getGameScore(i);
+            if (score < minScore) minScore = score;
+            if (score > maxScore) maxScore = score;
+        }
+
+        return (maxScore - minScore > INSURMOUNTABLE_LEAD);
+    }
+
+    /**
+     * --- New Helper (Req 3): pruneActions (FIXED) ---
+     * Filters a list of actions to remove obviously bad moves.
+     */
+    private List<AbstractAction> pruneActions(List<AbstractAction> actions, AbstractGameState state) {
+        if (!(state instanceof SGGameState)) return actions; // Only apply to SushiGo
+
+        SGGameState sgState = (SGGameState) state;
+        int player = sgState.getCurrentPlayer();
+        List<SGCard> hand;
+        try {
+            // --- FIX: Called getPlayerHands() ---
+            hand = sgState.getPlayerHands().get(player).getComponents();
+        } catch (Exception e) {
+            return actions; // Hand might not be visible (e.g., if using imperfect info)
+        }
+
+        // --- Pruning Conditions ---
+        // 1. Has Nigiri in hand?
+        boolean hasNigiri = hand.stream().anyMatch(c ->
+                c.type == SGCard.SGCardType.SquidNigiri ||
+                        c.type == SGCard.SGCardType.SalmonNigiri ||
+                        c.type == SGCard.SGCardType.EggNigiri);
+
+        // 2. Is it the last pick of the round?
+        boolean isLastPick = hand.size() == 1;
+
+        // 3. Is it the last turn of the *game*? (RESTORED)
+        boolean isFinalRound = sgState.getRoundCounter() == 3; // Assuming 3 rounds
+        boolean isLastTurnOfGame = isFinalRound && isLastPick;
+
+
+        return actions.stream().filter(action -> {
+            if (!(action instanceof ChooseCard)) return true; // Keep non-card actions
+
+            SGCard card = (SGCard) ((ChooseCard) action).getCard(state);
+
+            // PRUNE 1: Don't play Wasabi if no Nigiri are in hand to follow up
+            if (card.type == SGCard.SGCardType.Wasabi && !hasNigiri) {
+                return false;
             }
-        }
 
-        if (bestAction == null) { // Failsafe if all actions have 0 value
-            return actions.get(rnd.nextInt(actions.size()));
-        }
-        return bestAction;
+            // PRUNE 2: Don't take a single Tempura/Sashimi on the last pick of a round
+            if (isLastPick && (card.type == SGCard.SGCardType.Tempura || card.type == SGCard.SGCardType.Sashimi)) {
+                return false;
+            }
+
+            // PRUNE 3: Don't take Pudding on the very last turn of the game (it will score 0) (RESTORED)
+            if (isLastTurnOfGame && card.type == SGCard.SGCardType.Pudding) {
+                return false;
+            }
+
+            return true; // Keep the action
+        }).collect(Collectors.toList());
     }
 
     /**
-     * --- New Helper: getWidthParameter (Prompt 5) ---
+     * --- New Helper (Req 4): getDynamicK (FIXED) ---
+     * Returns a different UCB exploration constant based on the *turn within the round*,
+     * which is proxied by the current player's hand size.
      */
-    private double getWidthParameter() {
-        if (state instanceof SGGameState) {
-            int round = ((SGGameState) state).getRoundCounter();
-            if (round <= 5) return WIDTH_PARAMETER_EARLY;
-            else if (round <= 11) return WIDTH_PARAMETER_MID;
-            else return WIDTH_PARAMETER_LATE;
+    protected double getDynamicK() {
+        if (!(this.state instanceof SGGameState)) {
+            return params.K; // Default
         }
-        return 10.0; // Default
-    }
 
-    /**
-     * --- New Helper: getMaxChildren (Prompt 2 & 5) ---
-     */
-    private int getMaxChildren() {
-        double width = getWidthParameter();
-        return Math.max(1, (int) (width * Math.sqrt(nVisits)));
-    }
+        SGGameState sgState = (SGGameState) this.state;
+        int player = sgState.getCurrentPlayer();
+        int handSize = 0;
 
-    /**
-     * --- New Helper: isOpponentWithKnownHand (Prompt 3) ---
-     */
-    private boolean isOpponentWithKnownHand(AbstractGameState curState) {
-        int rootPlayer = player.getPlayerID();
-        int currentPlayer = curState.getCurrentPlayer();
-
-        if (currentPlayer != rootPlayer && curState instanceof SGGameState) {
-            return ((SGGameState) curState).isHandKnown(rootPlayer, currentPlayer);
+        try {
+            // Get the size of the current player's hand
+            // --- FIX: Called getPlayerHands() ---
+            handSize = sgState.getPlayerHands().get(player).getComponents().size();
+        } catch (Exception e) {
+            return params.K; // Failsafe if hand is not available
         }
-        return false;
+
+        // Adjust K based on the number of cards left in hand (turn *within* the round)
+        // More cards = early in round = more exploration
+        if (handSize > 6) {
+            return K_EARLY; // e.g., 9, 8, 7 cards left
+        } else if (handSize > 2) {
+            return K_MID;   // e.g., 6, 5, 4, 3 cards left
+        } else {
+            return K_LATE;  // e.g., 2, 1 cards left (hands are very known)
+        }
     }
 
     // --- STANDARD HELPER METHODS (UNCHANGED) ---
@@ -444,6 +464,7 @@ public class GeminiMCTSTreeNode {
         if (bestAction == null) {
             if (children.isEmpty()) {
                 List<AbstractAction> actions = player.getForwardModel().computeAvailableActions(state, player.getParameters().actionSpace);
+                if (actions.isEmpty()) return null;
                 return actions.get(rnd.nextInt(actions.size()));
             }
             List<AbstractAction> childActions = new ArrayList<>(children.keySet());
