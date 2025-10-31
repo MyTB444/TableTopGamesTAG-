@@ -1,11 +1,18 @@
 {
-  "class" : "players.basicMCTS.BasicMCTSParams",
-  "K" : 1.6,
-  "rolloutLength" : 8,
-  "maxTreeDepth" : 15,
-  "heuristic" : {
-    "class" : "players.heuristics.ScoreHeuristic"
+  "class": "players.enhancedBasicMCTS.BasicMCTSParams",
+  "K": 1.6,
+  "rolloutLength": 8,
+  "maxTreeDepth": 15,
+  "epsilon": 0.000001,
+  "heuristic": {
+    "class": "games.sushigo.SGHeuristic",
+    "scoreLeadWeight": 0.25,
+    "makiCompetitionWeight": 0.2,
+    "setCompletionWeight": 0.2,
+    "puddingStrategyWeight": 0.15,
+    "cardSynergyWeight": 0.1,
+    "opponentBlockingWeight": 0.1
   },
-  "budgetType" : "BUDGET_TIME",
-  "budget" : 500
+  "budgetType": "BUDGET_TIME",
+  "budget": 1000
 }

@@ -7,5 +7,5 @@
     "class" : "players.heuristics.ScoreHeuristic"
   },
   "budgetType" : "BUDGET_TIME",
-  "budget" : 500
+  "budget" : 1000
 }
