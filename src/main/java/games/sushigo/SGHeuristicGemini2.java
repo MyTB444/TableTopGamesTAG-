@@ -13,18 +13,18 @@ import java.util.Map;
 public class SGHeuristicGemini2 extends TunableParameters implements IStateHeuristic {
 
     // Multipliers for different components of the projected score.
-    double potentialMultiplier = 1.0;
-    double puddingMultiplier = 1.0;
-    double riskMultiplier = 1.0;
+    double potentialMultiplier = 0.8;
+    double puddingMultiplier = 2.0;
+    double riskMultiplier = 1.2;
     double makiMultiplier = 1.0;
-    double threatMultiplier = 0.5; // Weight for considering opponent scores.
+    double threatMultiplier = 0.75;
 
     public SGHeuristicGemini2() {
-        addTunableParameter("potentialMultiplier", 1.0);
-        addTunableParameter("puddingMultiplier", 1.0);
-        addTunableParameter("riskMultiplier", 1.0);
+        addTunableParameter("potentialMultiplier", 0.8);
+        addTunableParameter("puddingMultiplier", 2.0);
+        addTunableParameter("riskMultiplier", 1.2);
         addTunableParameter("makiMultiplier", 1.0);
-        addTunableParameter("threatMultiplier", 0.5);
+        addTunableParameter("threatMultiplier", 0.75);
         _reset();
     }
 
@@ -51,11 +51,6 @@ public class SGHeuristicGemini2 extends TunableParameters implements IStateHeuri
 
             double finalScore = myProjectedScore - (threatMultiplier * opponentTotalProjectedScore);
 
-            // --- DEBUGGING START (1/3): Final Heuristic Evaluation ---
-            System.out.println(String.format("DEBUG HEURISTIC (Player %d): Self-Score=%.2f, Opponent-Score=%.2f, Final Eval=%.2f",
-                    playerId, myProjectedScore, opponentTotalProjectedScore, finalScore));
-            // --- DEBUGGING END ---
-
             return finalScore;
         }
         return state.getPlayerResults()[playerId].value;
@@ -72,11 +67,6 @@ public class SGHeuristicGemini2 extends TunableParameters implements IStateHeuri
         double pudding = puddingMultiplier * estimatePuddingPoints(state, playerId);
         double risk = riskMultiplier * estimateSetRiskPoints(playedCardCounts);
         double maki = makiMultiplier * estimateMakiPoints(state, playerId);
-
-        // --- DEBUGGING START (2/3): Heuristic Component Breakdown ---
-        System.out.println(String.format("DEBUG COMPONENTS (Player %d): Base=%.1f, Maki=%.1f, Pudding=%.1f, Potential=%.1f, Risk=%.1f",
-                playerId, pScore, maki, pudding, potential, risk));
-        // --- DEBUGGING END ---
 
         return pScore + potential + pudding + risk + maki;
     }
