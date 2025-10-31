@@ -1,0 +1,11 @@
+{
+  "class" : "players.GeminiMcts.GeminiMCTSParams",
+  "K" : 1.5,
+  "rolloutLength" :8,
+  "maxTreeDepth" : 15,
+  "heuristic" : {
+    "class" : "games.sushigo.SGHeuristicGemini2"
+  },
+  "budgetType" : "BUDGET_TIME",
+  "budget" : 1000
+}
