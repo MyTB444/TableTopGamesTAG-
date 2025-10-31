@@ -13,16 +13,16 @@ import java.util.Map;
 public class SGHeuristicGemini2 extends TunableParameters implements IStateHeuristic {
 
     // Multipliers for different components of the projected score.
-    double potentialMultiplier = 1.0;
-    double puddingMultiplier = 1.0;
-    double riskMultiplier = 1.0;
+    double potentialMultiplier = 0.8;
+    double puddingMultiplier = 2.0;
+    double riskMultiplier = 1.2;
     double makiMultiplier = 1.0;
     double threatMultiplier = 0.5; // Weight for considering opponent scores.
 
     public SGHeuristicGemini2() {
-        addTunableParameter("potentialMultiplier", 1.0);
-        addTunableParameter("puddingMultiplier", 1.0);
-        addTunableParameter("riskMultiplier", 1.0);
+        addTunableParameter("potentialMultiplier", 0.8);
+        addTunableParameter("puddingMultiplier", 2.0);
+        addTunableParameter("riskMultiplier", 1.2);
         addTunableParameter("makiMultiplier", 1.0);
         addTunableParameter("threatMultiplier", 0.5);
         _reset();
@@ -67,7 +67,7 @@ public class SGHeuristicGemini2 extends TunableParameters implements IStateHeuri
         double pudding = puddingMultiplier * estimatePuddingPoints(state, playerId);
         double risk = riskMultiplier * estimateSetRiskPoints(playedCardCounts);
         double maki = makiMultiplier * estimateMakiPoints(state, playerId);
-        
+
 
         return pScore + potential + pudding + risk + maki;
     }
